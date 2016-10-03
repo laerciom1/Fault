@@ -21,7 +21,6 @@ public class Grid {
 		}
 		
 		this.apps = cm.getTasks();
-		allocateApps(apps);
 	}
 	
 	public void allocateApps(int apps){
