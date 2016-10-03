@@ -1,0 +1,29 @@
+-- YX Padrao Nao Adaptativo
+
+-- Uso dos roteadores [Qtd de comunicacoes que usam cada roteador]
+
+Router 1: 2		|	Router 2: 7		|	Router 3: 5		|	Router 4: 3		|	Router 5: 1
+Router 6: 2		|	Router 7: 1		|	Router 8: 1		|	Router 9: 2		|	Router 10: 3
+Router 11: 0	|	Router 12: 0	|	
+
+-- Uso dos roteadores [Qtd de comunicacoes que usam cada roteador/Total de comunicacoes]
+
+Router 1: 22,22		|	Router 2: 77,78		|	Router 3: 55,56		|	Router 4: 33,33		|	Router 5: 11,11
+Router 6: 22,22		|	Router 7: 11,11		|	Router 8: 11,11		|	Router 9: 22,22		|	Router 10: 33,33
+Router 11: 0,00	|	Router 12: 0,00	|	
+
+-- 9 Comunicacoes tiveram sucesso.
+-- Porcentagem de falha: 0.0
+
+
+-- Foram avaliadas 9 comunicacoes:
+
+App 1 to App 0 > Path: 4 3 2 
+App 2 to App 0 > Path: 1 2 
+App 3 to App 0 > Path: 3 2 
+App 4 to App 0 > Path: 5 1 2 
+App 5 to App 1 > Path: 10 6 2 3 4 
+App 6 to App 5 > Path: 9 10 
+App 7 to App 0 > Path: 7 3 2 
+App 8 to App 6 > Path: 6 10 9 
+App 9 to App 0 > Path: 8 4 3 2 
