@@ -9,7 +9,7 @@ public class Grid {
 	private int faults;
 	private int lines, columns;
 	
-	public Grid(AdjacencyMatrix am, CommunicationMatrix cm){
+	public Grid(AdjacencyMatrix am){
 		this.random = new Random();
 		this.columns = am.getColumns();
 		this.lines = am.getLines();
@@ -20,6 +20,14 @@ public class Grid {
 				grid[i][j] = new NodeGrid((i*columns)+j+1, true, 1.0);
 			}
 		}
+	}
+	
+	public void allocateAppByRouter(int app, int router){
+		grid[(router/columns)][(router%columns)].addApp(app);
+	}
+	
+	public void allocateAppByPos(int app, int i, int j){
+		grid[i][j].addApp(app);
 	}
 	
 	public void allocateAppsSeq(int apps){
@@ -80,13 +88,21 @@ public class Grid {
 		}
 	}
 	
-	public void injectFaults(double percentage){
+	public void injectFaultByNode(int router){
+		grid[(router/columns)][(router%columns)].setWorking(false);
+	}
+	public void injectFaultByPos(int i, int j){
+		grid[i][j].setWorking(false);
+	}
+	
+	public int injectFaultsByPercentage(double percentage){
 		if(percentage == 0){
 			for(int i = 0; i < lines; i++){
 				for(int j = 0; j < columns; j++){
 					grid[i][j].setWorking(true);
 				}
 			}
+			this.faults = 0;
 		}
 		else{
 			int faults = (int) ((lines*columns*percentage)/100);
@@ -107,8 +123,9 @@ public class Grid {
 						faults--;
 					}
 				}
-			}	
+			}
 		}
+		return this.faults;
 	}
 		
 	public void printIds(){
@@ -207,7 +224,7 @@ public class Grid {
 		int[] pos = new int[]{-1, -1};
 		return pos; 
 	}
-	
+	/********************************************************************************************************************/
 	public int[][] XYPadrao(CommunicationMatrix cm){	
 		int[][] communications = cm.getMatrix();
 		int tasks = cm.getTasks();
@@ -320,7 +337,7 @@ public class Grid {
 		
 		return resultado;
 	}
-	
+	/********************************************************************************************************************/
 	public int[][] YXPadrao(CommunicationMatrix cm){	
 		int[][] communications = cm.getMatrix();
 		int tasks = cm.getTasks();
@@ -433,7 +450,7 @@ public class Grid {
 		
 		return resultado;
 	}
-	
+	/********************************************************************************************************************/	
 	public int[][] XYTorus(CommunicationMatrix cm){	
 		int[][] communications = cm.getMatrix();
 		int tasks = cm.getTasks();
@@ -600,7 +617,7 @@ public class Grid {
 		
 		return resultado;
 	}
-	
+	/********************************************************************************************************************/
 	public int[][] YXTorus(CommunicationMatrix cm){	
 		int[][] communications = cm.getMatrix();
 		int tasks = cm.getTasks();
@@ -768,7 +785,7 @@ public class Grid {
 		
 		return resultado;
 	}
-	
+	/********************************************************************************************************************/
 	public int[][] XXYYPadrao(CommunicationMatrix cm){	
 		int[][] communications = cm.getMatrix();
 		int tasks = cm.getTasks();
@@ -795,8 +812,9 @@ public class Grid {
 												// origem e destino.
 					headsNTails.add(headNTail);
 					
-					ArrayList<Integer> actualPath = new ArrayList<Integer>();
-					if(grid[auxL][auxC].isWorking()){
+					ArrayList<Integer> actualPath = new ArrayList<Integer>(); // Array que vai guardar o caminho atual
+					
+					if(grid[auxL][auxC].isWorking()){ // Testando se o primeiro node está funcionando
 						actualPath.add((auxL*columns)+auxC+1);
 					}
 					else{
@@ -808,76 +826,71 @@ public class Grid {
 											// FALSE - prioridade andar na vertical
 					
 					if(!actualPath.contains(-1)){
-						while((auxC != jC || auxL != jL) && !actualPath.contains(-1)){
-							if(hor){
-			 					if(auxC < jC){
-			 						if(grid[auxL][auxC+1].isWorking()){
+						while((auxC != jC || auxL != jL) && !actualPath.contains(-1)){	// Enquanto não chegar no destino
+																						// e ainda está apto a andar
+							if(hor){ // Prioridade no inicio é andar pela horizontal
+			 					if(auxC < jC){ // Andando para direita
+			 						if(grid[auxL][auxC+1].isWorking()){ // Se o node a direita está funcionando
 				 						auxC++;
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){
-				 							actualPath.add((auxL*columns)+auxC+1);
+				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // se o node ainda não tiver sido adicionado
+				 							actualPath.add((auxL*columns)+auxC+1); // adicione
 				 						}
-				 						else{
-				 							actualPath.add(-1);
+				 						else{ // se o node ja tiver sido adicionado (loop)
+				 							actualPath.add(-1); // comunicação falhou
 				 							break;
 				 						}
 				 						
 			 						}
-				 					else if(!grid[auxL][auxC+1].isWorking()){
-				 						boolean dUpOK = false;
-				 						boolean dDownOK = false;
-				 						int discovererUp = auxL;
-				 						int discovererDown = auxL;
+				 					else{	// Se o node a direita não estiver funcionando
+				 						boolean dUpOK = false; 	// flags para saber se os discoverers
+				 						boolean dDownOK = false;// ja chegaram a um resultado
+				 						int discovererUp = auxL;	// dispara-se os discoverers a partir da linha atual 
+				 						int discovererDown = auxL;	// no caso, pra cima e para baixo, significa subir ou descer nas linhas
 				 						
-				 						while(!(dUpOK && dDownOK)){
-				 							if(discovererUp > 0 && !dUpOK){
-				 								if(grid[discovererUp-1][auxC].isWorking()){
-				 									discovererUp--;
-					 								if(grid[discovererUp][auxC].isWorking()){
-					 									dUpOK = true;
+				 						while(!dUpOK || !dDownOK){ // enquanto ambos os discoverers não chegarem a um resultado
+				 							if(!dUpOK){ // se ainda não chegou a um resultado
+				 								if(discovererUp > 0 && grid[discovererUp-1][auxC].isWorking()){ // se ainda pode andar pra cima e
+				 																								// o node acima esta funcionando
+				 									discovererUp--;	// sobe
+					 								if(grid[discovererUp][auxC+1].isWorking()){ // se é um caminho possível
+					 									dUpOK = true; // sinaliza que chegou a um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererUp = -1;
-				 									dUpOK = true;
+				 								else{					// se o node acima não está funcionando ou não existe
+				 									discovererUp = -1;	// sinaliza resultado negativo (não há caminhos possíveis por cima)
+				 									dUpOK = true;		// sinaliza que chegou a um resultado
 				 								}
 				 							}
-				 							else{
-				 								discovererUp = -1;
-				 								dUpOK = true;
-				 							}
-				 							
-				 							if(discovererDown < lines-1 && !dDownOK){
-				 								if(grid[discovererDown+1][auxC].isWorking()){
-				 									discovererDown++;
-					 								if(grid[discovererDown][auxC].isWorking()){
-					 									dDownOK = true;
+				 											 							
+				 							if(!dDownOK){ // se ainda não chegou a um resultado
+				 								if(discovererDown < lines-1 && grid[discovererDown+1][auxC].isWorking()){ 	// se ainda pode andar pra baixo e
+				 																											// o node abaixo esta funcionando
+				 									discovererDown++; // desce
+					 								if(grid[discovererDown][auxC+1].isWorking()){ // se é um caminho possível
+					 									dDownOK = true; // sinaliza que chegou a um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererDown = -1;
-				 									dDownOK = true;
-				 								}
-				 							}
-				 							else{
-				 								discovererDown = -1;
-				 								dDownOK = true;
+				 								else{ 						// caso não possa mais descer
+					 								discovererDown = -1;	// sinaliza resultado negativo (não há caminhos possíveis por baixo)
+					 								dDownOK = true;			// sinaliza que chegou a um resultado
+					 							}
 				 							}
 				 						}
 				 						
-				 						if(discovererUp == -1 && discovererDown == -1){
-				 							actualPath.add(-1);
+				 						if(discovererUp == -1 && discovererDown == -1){ // se houve resultado negativo por cima e por baixo
+				 							actualPath.add(-1);	// sinaliza que não há caminhos possíveis
 				 							break;
 				 						}
-				 						else if(discovererUp != -1 && discovererDown != -1){
-				 							int chosen = Math.abs(discovererUp - jL) <= Math.abs(discovererDown - jL) ? 
-				 											discovererUp : discovererDown;
+				 						else if(discovererUp != -1 && discovererDown != -1){ // se ambos acharam resultados positivos
 				 							
-				 							while(auxL != chosen){
+				 							int chosen = Math.abs(discovererUp - jL) <= Math.abs(discovererDown - jL) ? discovererUp : discovererDown;
+				 							// escolhe o resultado que esteja mais perto da linha destino
+				 							while(auxL != chosen){ // adiciona todos os nodes do caminho escolhido
 				 								if(auxL > chosen){
 				 									auxL--;
 				 								}
 				 								else{auxL++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
 				 									actualPath.add((auxL*columns)+auxC+1);
 				 								}
 				 								else{
@@ -886,11 +899,12 @@ public class Grid {
 				 								}
 				 							}
 				 						}
-				 						else{
-				 							if(discovererUp != -1){
-				 								while(auxL != discovererUp){
+				 						else{ // se apenas um dos discoverers retornaram resultado positivo
+				 							
+				 							if(discovererUp != -1){ // resultado positivo acima
+				 								while(auxL != discovererUp){ // adiciona todos os nodes do caminho escolhido
 				 									auxL--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -899,10 +913,11 @@ public class Grid {
 					 								}
 					 							}
 				 							}
-				 							else{
-				 								while(auxL != discovererDown){
+				 							else{	// resultado positivo abaixo
+				 								
+				 								while(auxL != discovererDown){ // adiciona todos os nodes do caminho escolhido
 				 									auxL++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -915,10 +930,10 @@ public class Grid {
 				 					}
 			 					}
 			 					
-			 					else if(auxC > jC){
-			 						if(grid[auxL][auxC-1].isWorking()){
-				 						auxC--;
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){
+			 					else if(auxC > jC){ // andando para esquerda
+			 						if(grid[auxL][auxC-1].isWorking()){ // se o node a esquerda estiver funcionando
+				 						auxC--; // anda pra esquerda
+				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // detecção de loops
 		 									actualPath.add((auxL*columns)+auxC+1);
 		 								}
 		 								else{
@@ -926,62 +941,56 @@ public class Grid {
 		 									break;
 		 								}
 			 						}
-				 					else if(!grid[auxL][auxC-1].isWorking()){
-				 						boolean dUpOK = false;
-				 						boolean dDownOK = false;
-				 						int discovererUp = auxL;
-				 						int discovererDown = auxL;
+				 					else{ // se o node a esqueda nao estiver funcionando
+				 						boolean dUpOK = false; 	// flags para saber se os discoverers
+				 						boolean dDownOK = false;// ja chegaram a um resultado
+				 						int discovererUp = auxL;	// dispara-se os discoverers a partir da linha atual 
+				 						int discovererDown = auxL;	// no caso, pra cima e para baixo, significa subir ou descer nas linhas
 				 						
-				 						while(!(dUpOK && dDownOK)){
-				 							if(discovererUp > 0 && !dUpOK){
-				 								if(grid[discovererUp-1][auxC].isWorking()){
-				 									discovererUp--;
-					 								if(grid[discovererUp][auxC].isWorking()){
-					 									dUpOK = true;
+				 						while(!dUpOK || !dDownOK){ // enquanto não houver resultados de ambos
+				 							if(!dUpOK){ // se ainda nao houver resultado do discovererUp
+				 								if(discovererUp > 0 && grid[discovererUp-1][auxC].isWorking()){ // se ainda puder ir pra cima e
+				 																								// o node a cima esta funcionando
+				 									discovererUp--; // sobe
+					 								if(grid[discovererUp][auxC-1].isWorking()){ // se houver um caminho possivel
+					 									dUpOK = true; // sinaliza que chegou a um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererUp = -1;
-				 									dUpOK = true;
+				 								else{ 					// se o node a cima nao estiver funcionando ou não existir
+				 									discovererUp = -1; 	// sinaliza um resultado negativo
+				 									dUpOK = true; 		// sinaliza que chegou a um resultado
 				 								}
-				 							}
-				 							else{
-				 								discovererUp = -1;
-				 								dUpOK = true;
 				 							}
 				 							
-				 							if(discovererDown < lines-1 && !dDownOK){
-				 								if(grid[discovererDown+1][auxC].isWorking()){
-				 									discovererDown++;
-					 								if(grid[discovererDown][auxC].isWorking()){
-					 									dDownOK = true;
+				 							if(!dDownOK){ // se ainda nao achou um resultado
+				 								if(discovererDown < lines-1 && grid[discovererDown+1][auxC].isWorking()){ 	// se ainda puder descer e
+				 																											// o node abaixo está funcionando
+				 									discovererDown++; // desce
+					 								if(grid[discovererDown][auxC-1].isWorking()){ // se achou um caminho possivel
+					 									dDownOK = true; // sinaliza que chegou a um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererDown = -1;
-				 									dDownOK = true;
+				 								else{ // se o node abaixo nao estiver funcionando
+				 									discovererDown = -1; // sinaliza resultado negativo
+				 									dDownOK = true; // sinaliza que chegou a um resultado
 				 								}
-				 							}
-				 							else{
-				 								discovererDown = -1;
-				 								dDownOK = true;
 				 							}
 				 						}
 				 						
-				 						if(discovererUp == -1 && discovererDown == -1){
+				 						if(discovererUp == -1 && discovererDown == -1){ // se ambos os resultados foram negativos
 				 							actualPath.add(-1);
 				 							break;
 				 						}
-				 						else if(discovererUp != -1 && discovererDown != -1){
+				 						else if(discovererUp != -1 && discovererDown != -1){ // se ambos forem positivos
 				 							int chosen = Math.abs(discovererUp - jL) <= Math.abs(discovererDown - jL) ? 
 				 											discovererUp : discovererDown;
-				 							
-				 							while(auxL != chosen){
+				 							// escolhe o mais próximo da linha destino
+				 							while(auxL != chosen){ // adicionando os nodes do caminho escolhido
 				 								if(auxL > chosen){
 				 									auxL--;
 				 								}
 				 								else{auxL++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
 				 									actualPath.add((auxL*columns)+auxC+1);
 				 								}
 				 								else{
@@ -990,11 +999,11 @@ public class Grid {
 				 								}
 				 							}
 				 						}
-				 						else{
-				 							if(discovererUp != -1){
-				 								while(auxL != discovererUp){
+				 						else{ // se houve apenas um resultado positivo
+				 							if(discovererUp != -1){ // se foi pra cima
+				 								while(auxL != discovererUp){ // adiciona os nodes do caminho encontrado
 				 									auxL--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1003,10 +1012,10 @@ public class Grid {
 					 								}
 					 							}
 				 							}
-				 							else{
-				 								while(auxL != discovererDown){
+				 							else{ // se foi pra baixo
+				 								while(auxL != discovererDown){ // adiciona os nodes do caminho encontrado
 				 									auxL++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1018,14 +1027,14 @@ public class Grid {
 				 						}
 				 					}
 			 					}
-			 					if(auxC == jC){hor = !hor;}
+			 					if(auxC == jC){hor = !hor;} // se já alinhou com a coluna do destino, a prioridade agora é andar na vertical
 							}
 		 					
-							if(!hor){
-			 					if(auxL < jL){
-			 						if(grid[auxL+1][auxC].isWorking()){
-				 						auxL++;
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){
+							if(!hor){ // se a prioridade é andar na vertical
+			 					if(auxL < jL){ // andando para baixo
+			 						if(grid[auxL+1][auxC].isWorking()){ // se o node abaixo esta funcionando
+				 						auxL++; // desce
+				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops e adicionando o node ao caminho atual
 		 									actualPath.add((auxL*columns)+auxC+1);
 		 								}
 		 								else{
@@ -1033,62 +1042,56 @@ public class Grid {
 		 									break;
 		 								}
 			 						}
-				 					else if(!grid[auxL+1][auxC].isWorking()){
-				 						boolean dLeftOK = false;
-				 						boolean dRightOK = false;
-				 						int discovererLeft = auxC;
-				 						int discovererRight = auxC;
+				 					else{ // se o node nao estiver funcionando
+				 						boolean dLeftOK = false; 	// flags para sinalizar se
+				 						boolean dRightOK = false;	// ja chegou a um resultado
+				 						int discovererLeft = auxC; 	// discoverers que irao procurar caminhos possiveis
+				 						int discovererRight = auxC; // para a esquerda e para a direita
 				 						
-				 						while(!(dLeftOK && dRightOK)){
-				 							if(discovererLeft > 0 && !dLeftOK){
-				 								if(grid[auxL][discovererLeft-1].isWorking()){
-				 									discovererLeft--;
-					 								if(grid[auxL][discovererLeft].isWorking()){
-					 									dLeftOK = true;
+				 						while(!(dLeftOK && dRightOK)){ // enquanto ambos nao obtiverem um resultado
+				 							if(!dLeftOK){ // se nao tiver encontrado um resultado ainda
+				 								if(discovererLeft > 0 && grid[auxL][discovererLeft-1].isWorking()){ // se ainda puder ir pra esquerda e
+				 																									// o node da esquerda estiver funcionando
+				 									discovererLeft--; // vai pra esquerda
+					 								if(grid[auxL+1][discovererLeft].isWorking()){
+					 									dLeftOK = true; // sinaliza que encontrou um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererLeft = -1;
-				 									dLeftOK = true;
-				 								}
-				 							}
-				 							else{
-				 								discovererLeft = -1;
-				 								dLeftOK = true;
+					 							else{ // se nao puder mais ir pra esquerda ou o node nao estiver funcionando
+					 								discovererLeft = -1; // sinaliza resultado negativo
+					 								dLeftOK = true; // sinaliza que chegou a um resultado
+					 							}
 				 							}
 				 							
-				 							if(discovererRight < columns-1 && !dRightOK){
-				 								if(grid[auxL][discovererRight+1].isWorking()){
-				 									discovererRight++;
-					 								if(grid[auxL][discovererRight].isWorking()){
-					 									dRightOK = true;
+				 							if(!dRightOK){ // se ainda nao achou um resultado
+				 								if(discovererRight < columns-1 && grid[auxL][discovererRight+1].isWorking()){// se ainda puder ir para a direita 
+				 																										// e o node da direita estiver funcionando
+				 									discovererRight++; // vai pra direita
+					 								if(grid[auxL+1][discovererRight].isWorking()){ // se encontrou um caminho possível
+					 									dRightOK = true; // sinaliza que tem um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererRight = -1;
-				 									dRightOK = true;
+				 								else{ // se o node a direita nao estiver funcionando ou nao existir
+				 									discovererRight = -1; // sinaliza resultado negativo
+				 									dRightOK = true; // sinaliza que chegou a um resultado
 				 								}
-				 							}
-				 							else{
-				 								discovererRight = -1;
-				 								dRightOK = true;
 				 							}
 				 						}
 				 						
-				 						if(discovererLeft == -1 && discovererRight == -1){
-				 							actualPath.add(-1);
+				 						if(discovererLeft == -1 && discovererRight == -1){ // se obteve resultado negativo em ambos os discoverers
+				 							actualPath.add(-1); 
 				 							break;
 				 						}
-				 						else if(discovererLeft != -1 && discovererRight != -1){
+				 						else if(discovererLeft != -1 && discovererRight != -1){ // se obteve resultado positivo em ambosd]
 				 							int chosen = Math.abs(discovererLeft - jC) <= Math.abs(discovererRight - jC) ? 
 				 											discovererLeft : discovererRight;
-				 							
-				 							while(auxC != chosen){
+				 							// escolhe o que esta mais proximo a coluna destino
+				 							while(auxC != chosen){ // adiciona os nodes do caminho encontrado
 				 								if(auxC > chosen){
 				 									auxC--;
 				 								}
 				 								else{auxC++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 				 									actualPath.add((auxL*columns)+auxC+1);
 				 								}
 				 								else{
@@ -1096,11 +1099,11 @@ public class Grid {
 				 								}
 				 							}
 				 						}
-				 						else{
-				 							if(discovererLeft != -1){
-				 								while(auxC != discovererLeft){
+				 						else{ // se apenas um obteve resultado positivo
+				 							if(discovererLeft != -1){ // se foi o da esquerda
+				 								while(auxC != discovererLeft){ // adciona nodes do caminho escontrado
 				 									auxC--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1109,10 +1112,10 @@ public class Grid {
 					 								}
 					 							}
 				 							}
-				 							else{
-				 								while(auxC != discovererRight){
+				 							else{ // se foi o da direita
+				 								while(auxC != discovererRight){ // adciona nodes do caminho escontrado
 				 									auxC++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1125,10 +1128,10 @@ public class Grid {
 				 					}
 			 					}
 			 					
-			 					else if(auxL > jL){
-			 						if(grid[auxL-1][auxC].isWorking()){
-				 						auxL--;
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){
+			 					else if(auxL > jL){ // andando para a cima
+			 						if(grid[auxL-1][auxC].isWorking()){ // se o node acima esta funcionando
+				 						auxL--; // sobe
+				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 		 									actualPath.add((auxL*columns)+auxC+1);
 		 								}
 		 								else{
@@ -1136,62 +1139,56 @@ public class Grid {
 		 									break;
 		 								}
 			 						}
-				 					else if(!grid[auxL-1][auxC].isWorking()){
-				 						boolean dLeftOK = false;
-				 						boolean dRightOK = false;
-				 						int discovererLeft = auxC;
-				 						int discovererRight = auxC;
+				 					else if(!grid[auxL-1][auxC].isWorking()){ // se o node acima nao esta funcionando
+				 						boolean dLeftOK = false; 	// flags para sinalizar se
+				 						boolean dRightOK = false;	// ja chegou a um resultado
+				 						int discovererLeft = auxC; 	// discoverers que irao procurar caminhos possiveis
+				 						int discovererRight = auxC; // para a esquerda e para a direita
 				 						
-				 						while(!(dLeftOK && dRightOK)){
-				 							if(discovererLeft > 0 && !dLeftOK){
-				 								if(grid[auxL][discovererLeft-1].isWorking()){
-				 									discovererLeft--;
-					 								if(grid[auxL][discovererLeft].isWorking()){
-					 									dLeftOK = true;
+				 						while(!(dLeftOK && dRightOK)){ // enquando ambos nao chegarem a um resultado
+				 							if(!dLeftOK){ // se ainda nao achou um resultado
+				 								if(discovererLeft > 0 && grid[auxL][discovererLeft-1].isWorking()){ // se o node da esquerda existe
+				 																									// e esta funcionando
+				 									discovererLeft--; // vai pra esquerda
+					 								if(grid[auxL-1][discovererLeft].isWorking()){ // se achou um caminho possivel
+					 									dLeftOK = true; // sinaliza que chegou a um resultado
 					 								}
 				 								}
-				 								else{
-				 									discovererLeft = -1;
-				 									dLeftOK = true;
+				 								else{ // se o node a esquerda nao esta funcionando ou nao existe
+				 									discovererLeft = -1; // sinaliza resultado negativo
+				 									dLeftOK = true; // sinaliza que chegou a um resultado
 				 								}
 				 							}
-				 							else{
-				 								discovererLeft = -1;
-				 								dLeftOK = true;
-				 							}
 				 							
-				 							if(discovererRight < columns-1 && !dRightOK){
-				 								if(grid[auxL][discovererRight+1].isWorking()){
-				 									discovererRight++;
-					 								if(grid[auxL][discovererRight].isWorking()){
+				 							if(!dRightOK){ // se ainda nao obteve um resultado
+				 								if(discovererRight < columns-1 && grid[auxL][discovererRight+1].isWorking()){ 	// se o node a direita existe
+				 																												// e esta funcionando
+				 									discovererRight++; // vai para a direita
+					 								if(grid[auxL-1][discovererRight].isWorking()){ // se encontrou um caminho possivel
 					 									dRightOK = true;
 					 								}
 				 								}
-				 								else{
-				 									discovererRight = -1;
-				 									dRightOK = true;
+				 								else{ // se o node a direita nao esta funcionando
+				 									discovererRight = -1; // sinaliza resultado negativo
+				 									dRightOK = true; // sinaliza que chegou a um resultado
 				 								}
-				 							}
-				 							else{
-				 								discovererRight = -1;
-				 								dRightOK = true;
 				 							}
 				 						}
 				 						
-				 						if(discovererLeft == -1 && discovererRight == -1){
+				 						if(discovererLeft == -1 && discovererRight == -1){ // se ambos chegaram a um resultado negativo
 				 							actualPath.add(-1);
 				 							break;
 				 						}
-				 						else if(discovererLeft != -1 && discovererRight != -1){
+				 						else if(discovererLeft != -1 && discovererRight != -1){ // se ambos chegaram a um resultado positivo
 				 							int chosen = Math.abs(discovererLeft - jC) <= Math.abs(discovererRight - jC) ? 
 				 											discovererLeft : discovererRight;
-				 							
-				 							while(auxC != chosen){
+				 							// seleciona o resultado mais proximo da coluna do destino
+				 							while(auxC != chosen){ // adicionando nodes ao caminho
 				 								if(auxC > chosen){
 				 									auxC--;
 				 								}
 				 								else{auxC++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 				 									actualPath.add((auxL*columns)+auxC+1);
 				 								}
 				 								else{
@@ -1200,11 +1197,11 @@ public class Grid {
 				 								}
 				 							}
 				 						}
-				 						else{
-				 							if(discovererLeft != -1){
-				 								while(auxC != discovererLeft){
+				 						else{ // se apenas um obteve resultado positvo
+				 							if(discovererLeft != -1){ //se foi a esquerda
+				 								while(auxC != discovererLeft){ // adiciona nodes ao caminho
 				 									auxC--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1213,10 +1210,10 @@ public class Grid {
 					 								}
 					 							}
 				 							}
-				 							else{
-				 								while(auxC != discovererRight){
+				 							else{ // se foi a direita
+				 								while(auxC != discovererRight){ // adicionando nodes ao caminho
 				 									auxC++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){
+				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
 					 									actualPath.add((auxL*columns)+auxC+1);
 					 								}
 					 								else{
@@ -1228,17 +1225,17 @@ public class Grid {
 				 						}
 				 					}
 			 					}
-			 					if(auxL == jL){hor = !hor;}
+			 					if(auxL == jL){hor = !hor;} // se ja alinho a linha, a prioridade agora é andar na horizontal
 							}
 						}
 					}
 					
-					int[] ap = new int[actualPath.size()];
-					int indice = 0;
-					for (Integer n : actualPath) {
+					int[] ap = new int[actualPath.size()]; // vetor que guardara o caminho encontrado
+					int indice = 0; // variavel auxiliar
+					for (Integer n : actualPath) { // populando o vetor resultado fazendo uma copia do arraylist
 						ap[indice++] = n;
 					}
-					paths.add(ap); // adiciona o caminho no vetor que guarda os resultados
+					paths.add(ap); // adiciona o caminho no arraylist que guarda os resultados
 				}
 			}
 		}
@@ -1266,4 +1263,5 @@ public class Grid {
 		
 		return resultado;
 	}
+	/********************************************************************************************************************/
 }
