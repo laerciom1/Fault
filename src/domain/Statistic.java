@@ -8,7 +8,7 @@ public class Statistic {
 				if(results[i][j] == -1){
 					break;
 				}
-				routersUsage[results[i][j]-1]++;
+				routersUsage[results[i][j]]++;
 			}
 		}
 		return routersUsage;

@@ -1,18 +1,27 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+
+import dijkstra.*;
 
 public class Grid {
 	private NodeGrid[][] grid;
 	private Random random;
-	private int faults;
 	private int lines, columns;
+	private int routers, faults;
 	
 	public Grid(AdjacencyMatrix am){
 		this.random = new Random();
 		this.columns = am.getColumns();
 		this.lines = am.getLines();
+		this.routers = lines*columns;
 		grid = new NodeGrid[lines][columns];
 		
 		for(int i = 0; i < lines; i++){			// Setando os atributos dos roteadores
@@ -20,6 +29,14 @@ public class Grid {
 				grid[i][j] = new NodeGrid((i*columns)+j+1, true, 1.0);
 			}
 		}
+	}
+	
+	public int getNumberOfRouters(){
+		return routers;
+	}
+
+	public int getNumberOfFaults(){
+		return faults;
 	}
 	
 	public void allocateAppByRouter(int app, int router){
@@ -89,43 +106,46 @@ public class Grid {
 	}
 	
 	public void injectFaultByNode(int router){
-		grid[(router/columns)][(router%columns)].setWorking(false);
-	}
-	public void injectFaultByPos(int i, int j){
-		grid[i][j].setWorking(false);
+		if(grid[(router/columns)][(router%columns)].isWorking()){
+			grid[(router/columns)][(router%columns)].setWorking(false);
+			faults++;
+		}
 	}
 	
-	public int injectFaultsByPercentage(double percentage){
-		if(percentage == 0){
-			for(int i = 0; i < lines; i++){
-				for(int j = 0; j < columns; j++){
-					grid[i][j].setWorking(true);
-				}
-			}
-			this.faults = 0;
-		}
-		else{
-			int faults = (int) ((lines*columns*percentage)/100);
-			this.faults = faults;
-			System.out.print("\nFaults: " + faults + "\n");
-			boolean injected;
-			int randomRouter;
-			while(faults > 0){
-				injected = false;
-				while(!injected){									// Enquando nao injetar a falha
-					randomRouter = random.nextInt(columns*lines);	// pega um router aleatorio
-					if(grid[(randomRouter/columns)][(randomRouter%columns)].isWorking() &&
-							grid[(randomRouter/columns)][(randomRouter%columns)].getApps().size() == 0 ){
-														// se o router estiver funcionando e não tiver tarefas alocadas
-						grid[(randomRouter/columns)][(randomRouter%columns)].setWorking(false);
-														// injeta falha
-						injected = true;				// sinaliza que injetou a falha.
-						faults--;
-					}
-				}
+	public void injectFaultListByNode(int[] routers){
+		for(int i = 0; i < routers.length; i++){
+			if(grid[(routers[i]/columns)][(routers[i]%columns)].isWorking()){
+				grid[(routers[i]/columns)][(routers[i]%columns)].setWorking(false);
+				faults++;
 			}
 		}
-		return this.faults;
+	}
+	
+	public void injectFaultByPos(int i, int j){
+		grid[i][j].setWorking(false);
+		faults++;
+	}
+	
+	public void injectFaultsByPercentage(double percentage){
+		int faults_aux = (int) ((lines*columns*percentage)/100);
+		faults_aux -= faults;
+		faults = faults_aux;
+		boolean injected;
+		int randomRouter;
+		while(faults_aux > 0){
+			injected = false;
+			while(!injected){									// Enquando nao injetar a falha
+				randomRouter = random.nextInt(columns*lines);	// pega um router aleatorio
+				if(grid[(randomRouter/columns)][(randomRouter%columns)].isWorking() &&
+						grid[(randomRouter/columns)][(randomRouter%columns)].getApps().size() == 0 ){
+													// se o router estiver funcionando e não tiver tarefas alocadas
+					grid[(randomRouter/columns)][(randomRouter%columns)].setWorking(false);
+													// injeta falha
+					injected = true;				// sinaliza que injetou a falha.
+					faults_aux--;
+				}
+			}
+		}
 	}
 		
 	public void printIds(){
@@ -141,7 +161,8 @@ public class Grid {
 		}
 	}
 	
-	public void printAll(){
+	
+	public void printAllocations(){
 		for(int i = 0; i < columns*lines; i++){
 			if(i < 9){
 				System.out.print("Router [0" + (i+1) + "] (" + grid[(i/columns)][(i%columns)].getRealiability() + "), Apps: ");
@@ -161,7 +182,9 @@ public class Grid {
 			}
 			System.out.print("\n");
 		}
-		
+	}
+	
+	public void printGrid(){
 		for(int i = 0; i < lines; i++){
 			System.out.print("+");
 			for(int j = 0; j < columns; j++){
@@ -188,6 +211,47 @@ public class Grid {
 			System.out.print("-------+");
 		}
 		System.out.print("\n");
+	}
+	
+	public void paintGrid(){
+		JFrame main_frame = new JFrame("Fault");
+		main_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		main_frame.setLayout(null);
+		main_frame.setSize(8+10+(columns*64)+((columns-1)*5)+10, 30+10+(lines*64)+((lines-1)*5)+10);
+		main_frame.setLocationRelativeTo(null);
+		main_frame.setResizable(false);	
+		JTextArea[][] routers = new JTextArea[lines][columns];
+		for(int i = 0; i < lines; i++){
+			for(int j = 0; j < columns; j++){
+				routers[i][j] = new JTextArea();
+				routers[i][j].setLineWrap(true);
+				if(grid[i][j].isWorking()){
+					routers[i][j].setBackground(new Color(153, 255,153));
+				}
+				else{
+					routers[i][j].setBackground(new Color(255, 153,153));
+				}
+				routers[i][j].setBounds(10+(j*69),10+(i*69),64,64);
+				routers[i][j].setBounds(10+(j*69),10+(i*69),64,64);
+				String apps = new String();
+				apps += "[" + (grid[i][j].getId()-1) + "] ";
+				for(int a : grid[i][j].getApps()){
+					apps += a+" ";
+				}
+				routers[i][j].setText(apps);
+				routers[i][j].setVisible(true);
+				routers[i][j].setVisible(true);
+			}
+		}
+		
+		
+		
+		for(int i = 0; i < lines; i++){
+			for(int j = 0; j < columns; j++){
+				main_frame.add(routers[i][j]);
+			}
+		}		
+		main_frame.setVisible(true);
 	}
 	
 	public void printCommunications(CommunicationMatrix cm){
@@ -253,10 +317,9 @@ public class Grid {
 					
 					ArrayList<Integer> actualPath = new ArrayList<Integer>();
 					if(grid[auxL][auxC].isWorking()){
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 					}
 					else{
-						actualPath.add((auxL*columns)+auxC+1);
 						actualPath.add(-1);
 					}
 					
@@ -264,7 +327,7 @@ public class Grid {
 						while(auxC != jC){ // Itera primeiramente nas colunas (largura/horizontal/eixo x);
 		 					if(auxC < jC){
 		 						auxC++;
-		 						actualPath.add((auxL*columns)+auxC+1);
+		 						actualPath.add((auxL*columns)+auxC);
 		 						if(!grid[auxL][auxC].isWorking()){
 		 							actualPath.add(-1);
 		 							break;
@@ -273,7 +336,7 @@ public class Grid {
 		 					
 		 					if(auxC > jC){
 		 						auxC--;
-		 						actualPath.add((auxL*columns)+auxC+1);
+		 						actualPath.add((auxL*columns)+auxC);
 		 						if(!grid[auxL][auxC].isWorking()){
 		 							actualPath.add(-1);
 		 							break;
@@ -286,7 +349,7 @@ public class Grid {
 						while(auxL != jL){ // Iterando agora nas linhas (altura/vertical/eixo y)							
 							if(auxL < jL){
 								auxL++;
-								actualPath.add((auxL*columns)+auxC+1);
+								actualPath.add((auxL*columns)+auxC);
 								if(!grid[auxL][auxC].isWorking()){
 									actualPath.add(-1);
 									break;
@@ -295,7 +358,7 @@ public class Grid {
 							
 							if(auxL > jL){
 								auxL--;
-								actualPath.add((auxL*columns)+auxC+1);
+								actualPath.add((auxL*columns)+auxC);
 								if(!grid[auxL][auxC].isWorking()){
 									actualPath.add(-1);
 									break;
@@ -313,28 +376,16 @@ public class Grid {
 			}
 		}
 		
-		ArrayList<int[]> resultado_aux = new ArrayList<int[]>();
+		int[][] resultado = new int[paths.size()][];
 		for(int i = 0; i<paths.size(); i++){
-			ArrayList<Integer> aux_al = new ArrayList<Integer>();
-			aux_al.add(headsNTails.get(i)[0]);
-			aux_al.add(headsNTails.get(i)[1]);
+			int[] vetor_aux = new int[paths.get(i).length+2];
+			vetor_aux[0] = headsNTails.get(i)[0];
+			vetor_aux[1] = headsNTails.get(i)[1];
 			for(int j = 0; j<paths.get(i).length; j++){
-				aux_al.add(paths.get(i)[j]);
+				vetor_aux[j+2] = paths.get(i)[j];
 			}
-			
-			int[] aux_v = new int[aux_al.size()];
-			int indice = 0;
-			for (Integer n : aux_al) {
-				aux_v[indice++] = n;
-			}
-			resultado_aux.add(aux_v);
-		}
-		
-		int[][] resultado =  new int[resultado_aux.size()][];
-		for(int i = 0; i < resultado_aux.size(); i++){
-			resultado[i] = resultado_aux.get(i);
-		}
-		
+			resultado[i] = vetor_aux;
+		}		
 		return resultado;
 	}
 	/********************************************************************************************************************/
@@ -366,10 +417,10 @@ public class Grid {
 					
 					ArrayList<Integer> actualPath = new ArrayList<Integer>();
 					if(grid[auxL][auxC].isWorking()){
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 					}
 					else{
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 						actualPath.add(-1);
 					}
 					
@@ -377,7 +428,7 @@ public class Grid {
 						while(auxL != jL){ // Iterando agora nas linhas (altura/vertical/eixo y)							
 							if(auxL < jL){
 								auxL++;
-								actualPath.add((auxL*columns)+auxC+1);
+								actualPath.add((auxL*columns)+auxC);
 								if(!grid[auxL][auxC].isWorking()){
 									actualPath.add(-1);
 									break;
@@ -386,7 +437,7 @@ public class Grid {
 							
 							if(auxL > jL){
 								auxL--;
-								actualPath.add((auxL*columns)+auxC+1);
+								actualPath.add((auxL*columns)+auxC);
 								if(!grid[auxL][auxC].isWorking()){
 									actualPath.add(-1);
 									break;
@@ -399,7 +450,7 @@ public class Grid {
 	 					while(auxC != jC){ // Itera primeiramente nas colunas (largura/horizontal/eixo x);
 		 					if(auxC < jC){
 		 						auxC++;
-		 						actualPath.add((auxL*columns)+auxC+1);
+		 						actualPath.add((auxL*columns)+auxC);
 		 						if(!grid[auxL][auxC].isWorking()){
 		 							actualPath.add(-1);
 		 							break;
@@ -408,7 +459,7 @@ public class Grid {
 		 					
 		 					if(auxC > jC){
 		 						auxC--;
-		 						actualPath.add((auxL*columns)+auxC+1);
+		 						actualPath.add((auxL*columns)+auxC);
 		 						if(!grid[auxL][auxC].isWorking()){
 		 							actualPath.add(-1);
 		 							break;
@@ -426,28 +477,16 @@ public class Grid {
 			}
 		}
 		
-		ArrayList<int[]> resultado_aux = new ArrayList<int[]>();
+		int[][] resultado = new int[paths.size()][];
 		for(int i = 0; i<paths.size(); i++){
-			ArrayList<Integer> aux_al = new ArrayList<Integer>();
-			aux_al.add(headsNTails.get(i)[0]);
-			aux_al.add(headsNTails.get(i)[1]);
+			int[] vetor_aux = new int[paths.get(i).length+2];
+			vetor_aux[0] = headsNTails.get(i)[0];
+			vetor_aux[1] = headsNTails.get(i)[1];
 			for(int j = 0; j<paths.get(i).length; j++){
-				aux_al.add(paths.get(i)[j]);
+				vetor_aux[j+2] = paths.get(i)[j];
 			}
-			
-			int[] aux_v = new int[aux_al.size()];
-			int indice = 0;
-			for (Integer n : aux_al) {
-				aux_v[indice++] = n;
-			}
-			resultado_aux.add(aux_v);
-		}
-		
-		int[][] resultado =  new int[resultado_aux.size()][];
-		for(int i = 0; i < resultado_aux.size(); i++){
-			resultado[i] = resultado_aux.get(i);
-		}
-		
+			resultado[i] = vetor_aux;
+		}		
 		return resultado;
 	}
 	/********************************************************************************************************************/	
@@ -479,10 +518,9 @@ public class Grid {
 					
 					ArrayList<Integer> actualPath = new ArrayList<Integer>();
 					if(grid[auxL][auxC].isWorking()){
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 					}
 					else{
-						actualPath.add((auxL*columns)+auxC+1);
 						actualPath.add(-1);
 					}
 					
@@ -493,7 +531,7 @@ public class Grid {
 							while(auxC != jC){ // Itera primeiramente nas colunas (largura/horizontal/eixo x);
 			 					if(auxC < jC){
 			 						auxC++;
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -502,7 +540,7 @@ public class Grid {
 			 					
 			 					if(auxC > jC){
 			 						auxC--;
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -515,7 +553,7 @@ public class Grid {
 			 					if(iC < jC){
 			 						auxC--;
 			 						if(auxC < 0){auxC=columns-1;}
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -525,7 +563,7 @@ public class Grid {
 			 					if(iC > jC){
 			 						auxC++;
 			 						if(auxC == columns){auxC=0;}
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -542,7 +580,7 @@ public class Grid {
 							while(auxL != jL){ // Iterando agora nas linhas (altura/vertical/eixo y)							
 								if(auxL < jL){
 									auxL++;
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -551,7 +589,7 @@ public class Grid {
 								
 								if(auxL > jL){
 									auxL--;
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -564,7 +602,7 @@ public class Grid {
 								if(iL < jL){
 									auxL--;
 									if(auxL < 0){auxL = lines-1;}
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -574,7 +612,7 @@ public class Grid {
 								if(auxL > jL){
 									auxL++;
 									if(auxL == lines){auxL = 0;}
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -593,28 +631,16 @@ public class Grid {
 			}
 		}
 		
-		ArrayList<int[]> resultado_aux = new ArrayList<int[]>();
+		int[][] resultado = new int[paths.size()][];
 		for(int i = 0; i<paths.size(); i++){
-			ArrayList<Integer> aux_al = new ArrayList<Integer>();
-			aux_al.add(headsNTails.get(i)[0]);
-			aux_al.add(headsNTails.get(i)[1]);
+			int[] vetor_aux = new int[paths.get(i).length+2];
+			vetor_aux[0] = headsNTails.get(i)[0];
+			vetor_aux[1] = headsNTails.get(i)[1];
 			for(int j = 0; j<paths.get(i).length; j++){
-				aux_al.add(paths.get(i)[j]);
+				vetor_aux[j+2] = paths.get(i)[j];
 			}
-			
-			int[] aux_v = new int[aux_al.size()];
-			int indice = 0;
-			for (Integer n : aux_al) {
-				aux_v[indice++] = n;
-			}
-			resultado_aux.add(aux_v);
-		}
-		
-		int[][] resultado =  new int[resultado_aux.size()][];
-		for(int i = 0; i < resultado_aux.size(); i++){
-			resultado[i] = resultado_aux.get(i);
-		}
-		
+			resultado[i] = vetor_aux;
+		}		
 		return resultado;
 	}
 	/********************************************************************************************************************/
@@ -646,10 +672,9 @@ public class Grid {
 					
 					ArrayList<Integer> actualPath = new ArrayList<Integer>();
 					if(grid[auxL][auxC].isWorking()){
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 					}
 					else{
-						actualPath.add((auxL*columns)+auxC+1);
 						actualPath.add(-1);
 					}
 					
@@ -660,7 +685,7 @@ public class Grid {
 							while(auxL != jL){ // Iterando nas linhas						
 								if(auxL < jL){
 									auxL++;
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -669,7 +694,7 @@ public class Grid {
 								
 								if(auxL > jL){
 									auxL--;
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -682,7 +707,7 @@ public class Grid {
 								if(iL < jL){
 									auxL--;
 									if(auxL < 0){auxL = lines-1;}
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -692,7 +717,7 @@ public class Grid {
 								if(auxL > jL){
 									auxL++;
 									if(auxL == lines){auxL = 0;}
-									actualPath.add((auxL*columns)+auxC+1);
+									actualPath.add((auxL*columns)+auxC);
 									if(!grid[auxL][auxC].isWorking()){
 										actualPath.add(-1);
 										break;
@@ -709,7 +734,7 @@ public class Grid {
 							while(auxC != jC){ // Iterando nas linhas
 			 					if(auxC < jC){
 			 						auxC++;
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -718,7 +743,7 @@ public class Grid {
 			 					
 			 					if(auxC > jC){
 			 						auxC--;
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -731,7 +756,7 @@ public class Grid {
 			 					if(iC < jC){
 			 						auxC--;
 			 						if(auxC < 0){auxC=columns-1;}
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -741,7 +766,7 @@ public class Grid {
 			 					if(iC > jC){
 			 						auxC++;
 			 						if(auxC == columns){auxC=0;}
-			 						actualPath.add((auxL*columns)+auxC+1);
+			 						actualPath.add((auxL*columns)+auxC);
 			 						if(!grid[auxL][auxC].isWorking()){
 			 							actualPath.add(-1);
 			 							break;
@@ -815,10 +840,9 @@ public class Grid {
 					ArrayList<Integer> actualPath = new ArrayList<Integer>(); // Array que vai guardar o caminho atual
 					
 					if(grid[auxL][auxC].isWorking()){ // Testando se o primeiro node está funcionando
-						actualPath.add((auxL*columns)+auxC+1);
+						actualPath.add((auxL*columns)+auxC);
 					}
 					else{
-						actualPath.add((auxL*columns)+auxC+1);
 						actualPath.add(-1);
 					}
 					
@@ -832,8 +856,8 @@ public class Grid {
 			 					if(auxC < jC){ // Andando para direita
 			 						if(grid[auxL][auxC+1].isWorking()){ // Se o node a direita está funcionando
 				 						auxC++;
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // se o node ainda não tiver sido adicionado
-				 							actualPath.add((auxL*columns)+auxC+1); // adicione
+				 						if(!actualPath.contains((auxL*columns)+auxC)){ // se o node ainda não tiver sido adicionado
+				 							actualPath.add((auxL*columns)+auxC); // adicione
 				 						}
 				 						else{ // se o node ja tiver sido adicionado (loop)
 				 							actualPath.add(-1); // comunicação falhou
@@ -890,8 +914,8 @@ public class Grid {
 				 									auxL--;
 				 								}
 				 								else{auxL++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
-				 									actualPath.add((auxL*columns)+auxC+1);
+				 								if(!actualPath.contains((auxL*columns)+auxC)){ // testando se não está em um loop
+				 									actualPath.add((auxL*columns)+auxC);
 				 								}
 				 								else{
 				 									actualPath.add(-1);
@@ -904,8 +928,8 @@ public class Grid {
 				 							if(discovererUp != -1){ // resultado positivo acima
 				 								while(auxL != discovererUp){ // adiciona todos os nodes do caminho escolhido
 				 									auxL--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // testando se não está em um loop
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -917,8 +941,8 @@ public class Grid {
 				 								
 				 								while(auxL != discovererDown){ // adiciona todos os nodes do caminho escolhido
 				 									auxL++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // testando se não está em um loop
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // testando se não está em um loop
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -933,8 +957,8 @@ public class Grid {
 			 					else if(auxC > jC){ // andando para esquerda
 			 						if(grid[auxL][auxC-1].isWorking()){ // se o node a esquerda estiver funcionando
 				 						auxC--; // anda pra esquerda
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // detecção de loops
-		 									actualPath.add((auxL*columns)+auxC+1);
+				 						if(!actualPath.contains((auxL*columns)+auxC)){ // detecção de loops
+		 									actualPath.add((auxL*columns)+auxC);
 		 								}
 		 								else{
 		 									actualPath.add(-1);
@@ -990,8 +1014,8 @@ public class Grid {
 				 									auxL--;
 				 								}
 				 								else{auxL++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
-				 									actualPath.add((auxL*columns)+auxC+1);
+				 								if(!actualPath.contains((auxL*columns)+auxC)){ // verificação de loops
+				 									actualPath.add((auxL*columns)+auxC);
 				 								}
 				 								else{
 				 									actualPath.add(-1);
@@ -1003,8 +1027,8 @@ public class Grid {
 				 							if(discovererUp != -1){ // se foi pra cima
 				 								while(auxL != discovererUp){ // adiciona os nodes do caminho encontrado
 				 									auxL--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificação de loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1015,8 +1039,8 @@ public class Grid {
 				 							else{ // se foi pra baixo
 				 								while(auxL != discovererDown){ // adiciona os nodes do caminho encontrado
 				 									auxL++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificação de loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificação de loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1034,8 +1058,8 @@ public class Grid {
 			 					if(auxL < jL){ // andando para baixo
 			 						if(grid[auxL+1][auxC].isWorking()){ // se o node abaixo esta funcionando
 				 						auxL++; // desce
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops e adicionando o node ao caminho atual
-		 									actualPath.add((auxL*columns)+auxC+1);
+				 						if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops e adicionando o node ao caminho atual
+		 									actualPath.add((auxL*columns)+auxC);
 		 								}
 		 								else{
 		 									actualPath.add(-1);
@@ -1091,8 +1115,8 @@ public class Grid {
 				 									auxC--;
 				 								}
 				 								else{auxC++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-				 									actualPath.add((auxL*columns)+auxC+1);
+				 								if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+				 									actualPath.add((auxL*columns)+auxC);
 				 								}
 				 								else{
 				 									actualPath.add(-1);
@@ -1103,8 +1127,8 @@ public class Grid {
 				 							if(discovererLeft != -1){ // se foi o da esquerda
 				 								while(auxC != discovererLeft){ // adciona nodes do caminho escontrado
 				 									auxC--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1115,8 +1139,8 @@ public class Grid {
 				 							else{ // se foi o da direita
 				 								while(auxC != discovererRight){ // adciona nodes do caminho escontrado
 				 									auxC++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1131,8 +1155,8 @@ public class Grid {
 			 					else if(auxL > jL){ // andando para a cima
 			 						if(grid[auxL-1][auxC].isWorking()){ // se o node acima esta funcionando
 				 						auxL--; // sobe
-				 						if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-		 									actualPath.add((auxL*columns)+auxC+1);
+				 						if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+		 									actualPath.add((auxL*columns)+auxC);
 		 								}
 		 								else{
 		 									actualPath.add(-1);
@@ -1188,8 +1212,8 @@ public class Grid {
 				 									auxC--;
 				 								}
 				 								else{auxC++;}
-				 								if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-				 									actualPath.add((auxL*columns)+auxC+1);
+				 								if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+				 									actualPath.add((auxL*columns)+auxC);
 				 								}
 				 								else{
 				 									actualPath.add(-1);
@@ -1201,8 +1225,8 @@ public class Grid {
 				 							if(discovererLeft != -1){ //se foi a esquerda
 				 								while(auxC != discovererLeft){ // adiciona nodes ao caminho
 				 									auxC--;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1213,8 +1237,8 @@ public class Grid {
 				 							else{ // se foi a direita
 				 								while(auxC != discovererRight){ // adicionando nodes ao caminho
 				 									auxC++;
-				 									if(!actualPath.contains((auxL*columns)+auxC+1)){ // verificando loops
-					 									actualPath.add((auxL*columns)+auxC+1);
+				 									if(!actualPath.contains((auxL*columns)+auxC)){ // verificando loops
+					 									actualPath.add((auxL*columns)+auxC);
 					 								}
 					 								else{
 					 									actualPath.add(-1);
@@ -1240,28 +1264,139 @@ public class Grid {
 			}
 		}
 		
-		ArrayList<int[]> resultado_aux = new ArrayList<int[]>();
+		int[][] resultado = new int[paths.size()][];
 		for(int i = 0; i<paths.size(); i++){
-			ArrayList<Integer> aux_al = new ArrayList<Integer>();
-			aux_al.add(headsNTails.get(i)[0]);
-			aux_al.add(headsNTails.get(i)[1]);
+			int[] vetor_aux = new int[paths.get(i).length+2];
+			vetor_aux[0] = headsNTails.get(i)[0];
+			vetor_aux[1] = headsNTails.get(i)[1];
 			for(int j = 0; j<paths.get(i).length; j++){
-				aux_al.add(paths.get(i)[j]);
+				vetor_aux[j+2] = paths.get(i)[j];
 			}
-			int[] aux_v = new int[aux_al.size()];
-			int indice = 0;
-			for (Integer n : aux_al) {
-				aux_v[indice++] = n;
-			}
-			resultado_aux.add(aux_v);
-		}
-		
-		int[][] resultado =  new int[resultado_aux.size()][];
-		for(int i = 0; i < resultado_aux.size(); i++){
-			resultado[i] = resultado_aux.get(i);
-		}
-		
+			resultado[i] = vetor_aux;
+		}		
 		return resultado;
 	}
 	/********************************************************************************************************************/
+	public int[][] Dijkstra(CommunicationMatrix cm){	
+		int[][] communications = cm.getMatrix();
+		int tasks = cm.getTasks();
+		int iC,iL, jC, jL;
+		ArrayList<int[]> headsNTails = new ArrayList<int[]>();
+		ArrayList<int[]> paths = new ArrayList<int[]>();
+		
+		List<Vertex> nodes = new ArrayList<Vertex>();
+        List<Edge> edges = new ArrayList<Edge>();
+        
+        for (int i = 0; i < grid.length*grid[0].length; i++) {
+                Vertex location = new Vertex("Node_" + i, "" + i);
+                nodes.add(location);
+        }
+        
+        int edge = 0;
+        for(int i = 0; i < lines-1; i++){
+        	for(int j = 0; j < columns-1; j++){
+        		if(grid[i][j].isWorking()){
+        			if(grid[i][j+1].isWorking()){
+        				//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((i*columns)+j) + ", " + nodes.get((i*columns)+j+1) + ", 1);");
+        				Edge lane1 = new Edge("Edge_"+(edge++), nodes.get((i*columns)+j), nodes.get((i*columns)+j+1), 1);
+        				//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((i*columns)+j+1) + ", " + nodes.get((i*columns)+j) + ", 1);");
+        				Edge lane2 = new Edge("Edge_"+(edge++), nodes.get((i*columns)+j+1), nodes.get((i*columns)+j), 1);
+        				edges.add(lane1);
+        				edges.add(lane2);
+        			}
+        			if(grid[i+1][j].isWorking()){
+        				//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((i*columns)+j) + ", " + nodes.get(((i+1)*columns)+j) + ", 1);");
+        				Edge lane1 = new Edge("Edge_"+(edge++), nodes.get((i*columns)+j), nodes.get(((i+1)*columns)+j), 1);
+        				//System.out.println("addLane(Edge_" + edge + ", " + nodes.get(((i+1)*columns)+j) + ", " + nodes.get((i*columns)+j) + ", 1);");
+        				Edge lane2 = new Edge("Edge_"+(edge++), nodes.get(((i+1)*columns)+j), nodes.get((i*columns)+j),  1);
+        				edges.add(lane1);
+        				edges.add(lane2);
+        			}
+        		}
+        	}
+        }
+        
+        int jAux = grid[0].length-1;
+        for(int i = 0; i < lines-1; i++){
+        	if(grid[i][jAux].isWorking()){
+        		if(grid[i+1][jAux].isWorking()){
+        			//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((i*columns)+jAux) + ", " + nodes.get(((i+1)*columns)+jAux) + ", 1);");
+    				Edge lane1 = new Edge("Edge_"+(edge++), nodes.get((i*columns)+jAux), nodes.get(((i+1)*columns)+jAux), 1);
+    				//System.out.println("addLane(Edge_" + edge + ", " + nodes.get(((i+1)*columns)+jAux) + ", " + nodes.get((i*columns)+jAux) + ", 1);");
+    				Edge lane2 = new Edge("Edge_"+(edge++), nodes.get(((i+1)*columns)+jAux), nodes.get((i*columns)+jAux), 1);
+    				edges.add(lane1);
+    				edges.add(lane2);
+    			}
+        	}
+        }
+        
+        int iAux = grid.length-1;
+        for(int j = 0; j < columns-1; j++){
+        	if(grid[iAux][j].isWorking()){
+        		if(grid[iAux][j+1].isWorking()){
+        			//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((iAux*columns)+j) + ", " + nodes.get((iAux*columns)+j+1) + ", 1);");
+        			Edge lane1 = new Edge("Edge_"+(edge++), nodes.get((iAux*columns)+j), nodes.get((iAux*columns)+j+1), 1);
+        			//System.out.println("addLane(Edge_" + edge + ", " + nodes.get((iAux*columns)+j+1) + ", " + nodes.get((iAux*columns)+j) + ", 1);");
+        			Edge lane2 = new Edge("Edge_"+(edge++), nodes.get((iAux*columns)+j+1), nodes.get((iAux*columns)+j), 1);
+    				edges.add(lane1);
+    				edges.add(lane2);
+        		}
+        	}
+        }  
+        
+        Graph graph = new Graph(nodes, edges);
+        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+		
+		for(int i = 0; i < tasks; i++){ 		//nodes é o numero de nós do grafo
+			int[] iPos = getPos(i);
+			iL = iPos[0]; // Coluna
+			iC = iPos[1]; // Linha
+			for(int j = 0; j < tasks; j++){ 	// Busca aplicacoes que estao conectadas a aplicacao i;
+				if(communications[i][j] != 0){ 	// Achou uma aplicacao conectada a i
+					int[] jPos = getPos(j);
+					jL = jPos[0]; 			// Busca a posicao da aplicacao
+					jC = jPos[1];			// conectada a i que foi encontrada
+					int[] headNTail = {i, j};	// Vetor que vai guardar o caminho feito entre i e j;
+												// Node inicial (i) 
+												// Node final (j)	
+												// "Caminho de i para j:"
+												// Isso eh usado para saber a qual ligacao o caminho pertence
+												// uma vez que os 2 primeiros elementos do vetor sempre serao
+												// origem e destino.
+					headsNTails.add(headNTail);
+					int[] actualPath;
+					if((iL*columns)+iC == (jL*columns)+jC){
+						actualPath = new int[]{(jL*columns)+jC};
+					}
+					else{
+						dijkstra.execute(nodes.get((iL*columns)+iC));
+						LinkedList<Vertex> path = dijkstra.getPath(nodes.get((jL*columns)+jC));
+						if(path != null){
+							actualPath = new int[path.size()];
+			                int indice = 0;
+			                for (Vertex vertex : path) {
+			                	actualPath[indice++] = Integer.parseInt(vertex.getName());
+			                }
+						}
+						else{
+							actualPath = new int[]{-1};
+						}
+					}
+					paths.add(actualPath);
+				}
+			}
+		}
+
+		int[][] resultado = new int[paths.size()][];
+		for(int i = 0; i<paths.size(); i++){
+			int[] vetor_aux = new int[paths.get(i).length+2];
+			vetor_aux[0] = headsNTails.get(i)[0];
+			vetor_aux[1] = headsNTails.get(i)[1];
+			for(int j = 0; j<paths.get(i).length; j++){
+				vetor_aux[j+2] = paths.get(i)[j];
+			}
+			resultado[i] = vetor_aux;
+		}		
+		return resultado;
+	}
 }

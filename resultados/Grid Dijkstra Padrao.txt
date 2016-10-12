@@ -1,0 +1,38 @@
+-- Dijkstra Padrão
+
+-- Uso dos roteadores [Qtd de comunicações que usam cada roteador]
+
+Router 0: 1		|	Router 1: 0		|	Router 2: 0		|	Router 3: 0		|	Router 4: 0		|	Router 5: 0
+Router 6: 0		|	Router 7: 0		|	Router 8: 0		|	Router 9: 0		|	Router 10: 0	|	Router 11: 0
+Router 12: 0	|	Router 13: 0	|	Router 14: 0	|	Router 15: 0	|	Router 16: 0	|	Router 17: 0
+Router 18: 0	|	Router 19: 0	|	Router 20: 0	|	Router 21: 0	|	Router 22: 0	|	Router 23: 0
+Router 24: 0	|	Router 25: 0	|	Router 26: 0	|	Router 27: 0	|	Router 28: 0	|	Router 29: 0
+Router 30: 0	|	Router 31: 0	|	Router 32: 0	|	Router 33: 0	|	Router 34: 0	|	Router 35: 0
+Router 36: 0	|	Router 37: 0	|	Router 38: 0	|	Router 39: 0	|	Router 40: 0	|	Router 41: 0
+Router 42: 0	|	Router 43: 0	|	Router 44: 0	|	Router 45: 0	|	Router 46: 0	|	Router 47: 0
+Router 48: 0	|	
+
+-- Uso dos roteadores [Qtd de comunicações que usam cada roteador/Total de comunicações]
+
+Router 0: 100,00	|	Router 1: 0,00		|	Router 2: 0,00		|	Router 3: 0,00		|	Router 4: 0,00		|	Router 5: 0,00
+Router 6: 0,00		|	Router 7: 0,00		|	Router 8: 0,00		|	Router 9: 0,00		|	Router 10: 0,00		|	Router 11: 0,00
+Router 12: 0,00		|	Router 13: 0,00		|	Router 14: 0,00		|	Router 15: 0,00		|	Router 16: 0,00		|	Router 17: 0,00
+Router 18: 0,00		|	Router 19: 0,00		|	Router 20: 0,00		|	Router 21: 0,00		|	Router 22: 0,00		|	Router 23: 0,00
+Router 24: 0,00		|	Router 25: 0,00		|	Router 26: 0,00		|	Router 27: 0,00		|	Router 28: 0,00		|	Router 29: 0,00
+Router 30: 0,00		|	Router 31: 0,00		|	Router 32: 0,00		|	Router 33: 0,00		|	Router 34: 0,00		|	Router 35: 0,00
+Router 36: 0,00		|	Router 37: 0,00		|	Router 38: 0,00		|	Router 39: 0,00		|	Router 40: 0,00		|	Router 41: 0,00
+Router 42: 0,00		|	Router 43: 0,00		|	Router 44: 0,00		|	Router 45: 0,00		|	Router 46: 0,00		|	Router 47: 0,00
+Router 48: 0,00		|	
+
+-- Falhas injetadas: 16.
+
+-- 1 Comunicação tiveram sucesso.
+-- Porcentagem de falha: 0.0
+
+
+-- Foram avaliadas 1 comunicacoes:
+
+App 1 to App 0 > Path: 0 
+
+
+-- Tempo de execução: 5 ms.

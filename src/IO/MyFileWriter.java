@@ -3,16 +3,18 @@ package IO;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import domain.Grid;
+
 public class MyFileWriter {
 	private FileWriter file;
 
-	public void printAll(String s, String title, int routers, int[] routersUsage, double[] routersUsagePercent, int[][] result, long tempo, int faults) throws IOException{
+	public void printAll(String s, String title, Grid grid, int[] routersUsage, double[] routersUsagePercent, long tempo, int[][] result) throws IOException{
 		file = new FileWriter(s);
 		file.write("-- " + title);
 		file.close();
-		printRoutersUsage(s, routers, routersUsage);
-		printRoutersUsagePercent(s, routers, routersUsagePercent);
-		printFaults(s, faults);
+		printRoutersUsage(s, grid.getNumberOfRouters(), routersUsage);
+		printRoutersUsagePercent(s, grid.getNumberOfRouters(), routersUsagePercent);
+		printFaults(s, grid.getNumberOfFaults());
 		printSuccessfulCommunications(s, result);
 		printCommunications(s, result);
 		printTempo(s, tempo);
@@ -21,10 +23,13 @@ public class MyFileWriter {
 	public void printRoutersUsage(String s, int routers, int[] routersUsage) throws IOException{
 		file = new FileWriter(s, true);
 		file.write("\n\n-- Uso dos roteadores [Qtd de comunicações que usam cada roteador]\n\n");
-		for(int i = 1; i < routers+1; i++){
-			file.write("Router " + i + ": " + routersUsage[i-1]);
-			if(i % 5 == 0){
+		int count = 0;
+		for(int i = 0; i < routers; i++){
+			file.write("Router " + i + ": " + routersUsage[i]);
+			count++;
+			if(count>5){
 				file.write("\n");
+				count = 0;
 			}
 			else{
 				if(i < 10){
@@ -41,17 +46,22 @@ public class MyFileWriter {
 	public void printRoutersUsagePercent(String s, int routers, double[] routersUsagePercent) throws IOException{
 		file = new FileWriter(s, true);
 		file.write("\n\n-- Uso dos roteadores [Qtd de comunicações que usam cada roteador/Total de comunicações]\n\n");
-		for(int i = 1; i < routers+1; i++){
-			String rup = String.format("%.2f", routersUsagePercent[i-1]);
-			
+		int count = 0;
+		for(int i = 0; i < routers; i++){
+			String rup = String.format("%.2f", routersUsagePercent[i]);
 			file.write("Router " + i + ": " + rup);
-			if(i % 5 == 0){
+			count++;
+			if(count > 5){
 				file.write("\n");
+				count=0;
 			}
 			else{
-				if(i < 10 || routersUsagePercent[i-1] < 10){
-					file.write("		|	");
+				if(routersUsagePercent[i] > 99){
+					file.write("	|	");
 				}
+				else if(i < 10 || routersUsagePercent[i] < 10){
+					file.write("		|	");
+				} 
 				else{
 					file.write("	|	");
 				}
@@ -78,15 +88,15 @@ public class MyFileWriter {
 		file.write("\n\n-- Foram avaliadas " + communications.length + " comunicacoes:\n\n");
 		for (int i = 0; i < communications.length; i++){
 			file.write("App " + communications[i][0] + " to App " + communications[i][1] + " > Path: ");
-			for (int j=2; j < communications[i].length; j++){
-				if(communications[i][j] == -1){
-					file.write("# Não foi encontrado um caminho a partir do router " + communications[i][j-1] + " #");
-					break;
-				}
-				else{
+			if(communications[i][communications[i].length-1] != -1){
+				for (int j=2; j < communications[i].length; j++){
 					file.write(communications[i][j] + " ");	
 				}
 			}
+			else{
+				file.write("Não foi possível encontrar um caminho para realizar essa comunicação");	
+			}
+			
 			file.write("\n");
 		}
 		file.close();
