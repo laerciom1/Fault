@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import java.awt.Color;
+import java.io.IOException;
+
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
@@ -1397,6 +1399,513 @@ public class Grid {
 			}
 			resultado[i] = vetor_aux;
 		}		
+		return resultado;
+	}
+	/**
+	 * @throws IOException ******************************************************************************************************************/
+	public int[][] ParametrizavelPadrao(CommunicationMatrix cm, int lookahead) throws IOException{	
+		int[][] communications = cm.getMatrix();
+		int tasks = cm.getTasks();
+		int sourceC,sourceL, destinationC, destinationL, auxC, auxL;
+		ArrayList<int[]> headsNTails = new ArrayList<int[]>();
+		ArrayList<int[]> paths = new ArrayList<int[]>();
+		for(int source = 0; source < tasks; source++){ 		//nodes é o numero de nós do grafo
+			int[] sourcePos = getPos(source);
+			sourceL = sourcePos[0]; // Coluna
+			sourceC = sourcePos[1]; // Linha
+			for(int destination = 0; destination < tasks; destination++){ 	// Busca aplicacoes que estao conectadas a aplicacao i;
+				auxC = sourceC; 						// Seta novamente o aux pois ele sera
+				auxL = sourceL; 						// alterado caso exista uma busca de caminho
+				if(communications[source][destination] != 0){ 	// Achou uma aplicacao conectada a i
+					int[] destinationPos = getPos(destination);
+					destinationL = destinationPos[0]; 			// Busca a posicao da aplicacao
+					destinationC = destinationPos[1];			// conectada a i que foi encontrada
+					int[] headNTail = {source, destination};	// Vetor que vai guardar o caminho feito entre i e j;
+												// Node inicial (i) 
+												// Node final (j)	
+												// "Caminho de i para j:"
+												// Isso eh usado para saber a qual ligacao o caminho pertence
+												// uma vez que os 2 primeiros elementos do vetor sempre serao
+												// origem e destino.
+					headsNTails.add(headNTail);
+					
+					ArrayList<Integer> actualPath = new ArrayList<Integer>();
+					if(grid[auxL][auxC].isWorking()){
+						actualPath.add((auxL*columns)+auxC);
+					}
+					else{
+						actualPath.add(-1);
+					}
+					
+					int north[] = new int[2]; 	// posicao mais proxima do destino que pode-se chegar indo por cima
+					int south[] = new int[2]; 	// posicao mais proxima do destino que pode-se chegar indo por baixo
+					int west[] = new int[2];	// posicao mais proxima do destino que pode-se chegar indo pela esquerda
+					int east[] = new int[2];	// posicao mais proxima do destino que pode-se chegar indo pela direita
+					
+					if(!actualPath.contains(-1)){
+	 					while(!actualPath.contains((destinationL*columns)+destinationC) && !actualPath.contains(-1)){
+	 						/*
+	 						 * verificando, dentro do range, até onde posso ir para o norte
+	 						 */
+	 						for(int up = 0; up < lookahead; up++){ 
+	 							if(auxL-1 < 0){
+	 								north[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 									north[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 									break;
+	 							}
+	 							else if(auxL-1-up < 0 || !grid[auxL-1-up][auxC].isWorking()){
+ 									if(up == 0){
+ 	 									north[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 	 									north[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 	 									break;
+ 									}
+ 									else{
+ 										int dist[] = new int[up]; // vetor para ver o quão longe posso ir a direita ou a esquerda
+ 										int hops;
+ 		 								for(int i = 0; i < up; i++){ // up é a quantidade de caminhos possiveis por cima
+ 		 									hops = 0;
+ 		 									for(int j = 0; j < lookahead-i-1; j++){ // lookahead-i-1 é o máximo de saltos que ainda podem ser dados
+ 		 										if(auxC > destinationC){ // se o destino estiver a esquerda
+ 		 											if(grid[auxL-i-1][auxC-j-1].isWorking()){ // se o router esta funcionando, segue
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxC-j-1 == destinationC){
+ 		 													dist[i] = hops+i;
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 										else if(auxC < destinationC){ // se o destino estiver a direita
+ 		 											if(grid[auxL-i-1][auxC+j+1].isWorking()){
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxC+j+1 == destinationC){
+ 		 													dist[i] = hops+i; 
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 									}
+ 		 								}
+ 		 								int max = dist[0]; // guardando o numero maximo de hops
+ 		 								int pos = 0; // e qual o caminho que possui esse numero maximo de hops
+ 		 								for(int i = 1; i < dist.length; i++){
+ 		 									if(dist[i] > max){
+ 		 										max = dist[i];
+ 		 										pos = i;
+ 		 									}
+ 		 								}
+ 		 								north[0] = auxL-1-pos;
+ 		 								if(auxC > destinationC){
+ 		 									north[1] = auxC-1-(max-pos);
+ 		 								}
+ 		 								else if(auxC < destinationC){
+ 		 									north[1] = auxC+1+(max-pos);
+ 		 								}
+ 		 								else{
+ 		 									north[1] = auxC;
+ 		 								}
+ 		 								break;
+ 									}
+ 								}
+ 								else if(up == lookahead-1){
+ 									north[0] = auxL-lookahead;
+ 									north[1] = auxC;
+ 									break;
+ 								}
+ 							}
+	 						/*
+	 						 * verificando, dentro do range, até onde posso ir para o sul
+	 						 */
+	 						for(int down = 0; down < lookahead; down++){
+	 							if(auxL+1 > lines-1){
+	 								south[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 									south[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 									break;
+	 							}
+	 							else if(auxL+1+down > lines-1 || !grid[auxL+1+down][auxC].isWorking()){
+ 									if(down == 0){
+ 	 									south[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 	 									south[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 	 									break;
+ 									}
+ 									else{
+ 										int dist[] = new int[down]; // vetor para ver o quão longe posso ir a direita ou a esquerda
+ 										int hops;
+ 		 								for(int i = 0; i < down; i++){ // up é a quantidade de caminhos possiveis por cima
+ 		 									hops = 0;
+ 		 									for(int j = 0; j < lookahead-i-1; j++){ // lookahead-i-1 é o máximo de saltos que ainda podem ser dados
+ 		 										if(auxC > destinationC){ // se o destino estiver a esquerda
+ 		 											if(grid[auxL+i+1][auxC-j-1].isWorking()){ // se o router esta funcionando, segue
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxC-j-1 == destinationC){
+ 		 													dist[i] = hops+i;
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 										else if(auxC < destinationC){ // se o destino estiver a direita
+ 		 											if(grid[auxL+i+1][auxC+j+1].isWorking()){
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxC+j+1 == destinationC){
+ 		 													dist[i] = hops+i; 
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 									}
+ 		 								}
+ 		 								int max = dist[0]; // guardando o numero maximo de hops
+ 		 								int pos = 0; // e qual o caminho que possui esse numero maximo de hops
+ 		 								for(int i = 1; i < dist.length; i++){
+ 		 									if(dist[i] > max){
+ 		 										max = dist[i];
+ 		 										pos = i;
+ 		 									}
+ 		 								}
+ 		 								south[0] = auxL+1+pos;
+ 		 								if(auxC > destinationC){
+ 		 									south[1] = auxC-1-(max-pos);
+ 		 								}
+ 		 								else if(auxC < destinationC){
+ 		 									south[1] = auxC+1+(max-pos);
+ 		 								}
+ 		 								else{
+ 		 									south[1] = auxC;
+ 		 								}
+ 		 								break;
+ 									}
+ 								}
+ 								else if(down == lookahead-1){
+ 									south[0] = auxL+lookahead;
+ 									south[1] = auxC;
+ 									break;
+ 								}
+ 							}
+	 						/*
+	 						 * verificando, dentro do range, até onde posso ir para a esquerda
+	 						 */
+	 						for(int left = 0; left < lookahead; left++){ 
+	 							if(auxC-1 < 0){
+	 								west[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+									west[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 									break;
+	 							}
+	 							else if(auxC-1-left < 0 || !grid[auxL][auxC-1-left].isWorking()){
+ 									if(left == 0){
+ 										west[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 										west[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 	 									break;
+ 									}
+ 									else{
+ 										int dist[] = new int[left]; // vetor para ver o quão longe posso ir a direita ou a esquerda
+ 										int hops;
+ 		 								for(int i = 0; i < left; i++){ // up é a quantidade de caminhos possiveis por cima
+ 		 									hops = 0;
+ 		 									for(int j = 0; j < lookahead-i-1; j++){ // lookahead-i-1 é o máximo de saltos que ainda podem ser dados
+ 		 										if(auxL > destinationL){ // se o destino estiver a esquerda
+ 		 											if(grid[auxL-j-1][auxC-i-1].isWorking()){ // se o router esta funcionando, segue
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxL-j-1 == destinationL){
+ 		 													dist[i] = hops+i;
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 										else if(auxL < destinationL){ // se o destino estiver a direita
+ 		 											if(grid[auxL+j+1][auxC-i-1].isWorking()){
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxL+j+1 == destinationL){
+ 		 													dist[i] = hops+i; 
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 									}
+ 		 								}
+ 		 								int max = dist[0]; // guardando o numero maximo de hops
+ 		 								int pos = 0; // e qual o caminho que possui esse numero maximo de hops
+ 		 								for(int i = 1; i < dist.length; i++){
+ 		 									if(dist[i] > max){
+ 		 										max = dist[i];
+ 		 										pos = i;
+ 		 									}
+ 		 								}
+ 		 								west[1] = auxC-1-pos;
+ 		 								if(auxL > destinationL){
+ 		 									west[0] = auxL-1-(max-pos);
+ 		 								}
+ 		 								else if(auxL < destinationL){
+ 		 									west[0] = auxL+1+(max-pos);
+ 		 								}
+ 		 								else{
+ 		 									west[0] = auxL;
+ 		 								}
+ 		 								break;
+ 									}
+ 								}
+ 								else if(left == lookahead-1){
+ 									west[0] = auxL;
+ 									west[1] = auxC-lookahead;
+ 									break;
+ 								}
+ 							}
+	 						/*
+	 						 * verificando, dentro do range, até onde posso ir para a direita
+	 						 */
+	 						for(int right = 0; right < lookahead; right++){ 
+	 							if(auxC+1 > columns-1){
+	 								east[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+									east[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 									break;
+	 							}
+	 							else if(auxC+1+right > columns-1 || !grid[auxL][auxC+1+right].isWorking()){
+ 									if(right == 0){
+ 										east[0] = -1;	// nao e possivel seguir por cima, logo o mais longe que pode-se chegar
+ 										east[1] = -1;	// indo por cima eh a propria posicao onde já me encontro
+ 	 									break;
+ 									}
+ 									else{
+ 										int dist[] = new int[right]; // vetor para ver o quão longe posso ir a direita ou a esquerda
+ 										int hops;
+ 		 								for(int i = 0; i < right; i++){ // up é a quantidade de caminhos possiveis por cima
+ 		 									hops = 0;
+ 		 									for(int j = 0; j < lookahead-i-1; j++){ // lookahead-i-1 é o máximo de saltos que ainda podem ser dados
+ 		 										if(auxL > destinationL){ // se o destino estiver a esquerda
+ 		 											if(grid[auxL-j-1][auxC+i+1].isWorking()){ // se o router esta funcionando, segue
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxL-j-1 == destinationL){
+ 		 													dist[i] = hops+i;
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 										else if(auxL < destinationL){ // se o destino estiver a direita
+ 		 											if(grid[auxL+j+1][auxC+i+1].isWorking()){
+ 		 												hops++; // incrementa o numero de saltos possiveis naquela direcao
+ 		 												if(auxL+j+1 == destinationL){
+ 		 													dist[i] = hops+i; 
+ 			 												break;
+ 		 												}
+ 		 											}
+ 		 											else{
+ 		 												dist[i] = hops+i; 
+ 		 												break;
+ 		 											}
+ 		 										}
+ 		 									}
+ 		 								}
+ 		 								int max = dist[0]; // guardando o numero maximo de hops
+ 		 								int pos = 0; // e qual o caminho que possui esse numero maximo de hops
+ 		 								for(int i = 1; i < dist.length; i++){
+ 		 									if(dist[i] > max){
+ 		 										max = dist[i];
+ 		 										pos = i;
+ 		 									}
+ 		 								}
+ 		 								east[1] = auxC+1+pos;
+ 		 								if(auxL > destinationL){
+ 		 									east[0] = auxL-1-(max-pos);
+ 		 								}
+ 		 								else if(auxL < destinationL){
+ 		 									east[0] = auxL+1+(max-pos);
+ 		 								}
+ 		 								else{
+ 		 									east[0] = auxL;
+ 		 								}
+ 		 								break;
+ 									}
+ 								}
+ 								else if(right == lookahead-1){
+ 									east[0] = auxL;
+ 									east[1] = auxC+lookahead;
+ 									break;
+ 								}
+ 							}
+	 						
+	 						int northORsouth[] = new int[2];
+	 						int westOReast[] = new int[2];
+	 						
+	 						// Verificando a proxima rota possivel que deixa mais proximo possivel do destino
+//	 						System.out.println("Current: " + auxL + ", " + auxC + "(" + ((auxL*columns)+auxC) + ")");
+//	 						System.out.println("Destination: " + destinationL + ", " + destinationC + "(" + ((destinationL*columns)+destinationC) + ")");
+//	 						System.out.println("North: " + north[0] + ", " + north[1] + "(" + ((north[0]*columns)+north[1]) + ")");
+//	 						System.out.println("South: " + south[0] + ", " + south[1] + "(" + ((south[0]*columns)+south[1]) + ")");
+//	 						System.out.println("West: " + west[0] + ", " + west[1] + "(" + ((west[0]*columns)+west[1]) + ")");
+//	 						System.out.println("East: " + east[0] + ", " + east[1] + "(" + ((east[0]*columns)+east[1]) + ")");
+//	 						System.out.println("North to dest: " + Math.sqrt(Math.pow(north[1]-destinationC, 2)+Math.pow(north[0]-destinationL,2)));
+//	 						System.out.println("South to dest: " + Math.sqrt(Math.pow(south[1]-destinationC, 2)+Math.pow(south[0]-destinationL,2)));
+//	 						System.out.println("West to dest: " + Math.sqrt(Math.pow(west[1]-destinationC, 2)+Math.pow(west[0]-destinationL,2)));
+//	 						System.out.println("East to dest: " + Math.sqrt(Math.pow(east[1]-destinationC, 2)+Math.pow(east[0]-destinationL,2)));
+	 						
+	 						if((actualPath.contains((north[0]*columns)+north[1]) && actualPath.contains((south[0]*columns)+south[1])) || (north[0] == -1 && south[0] == -1)){
+ 								northORsouth[0] = -1;
+	 							northORsouth[1] = -1;
+ 							}
+ 							else if((actualPath.contains((north[0]*columns)+north[1]) || north[0] == -1) && !actualPath.contains((south[0]*columns)+south[1])){
+ 								northORsouth = south;
+ 							}
+ 							else if((actualPath.contains((south[0]*columns)+south[1]) || south[0] == -1) && !actualPath.contains((north[0]*columns)+north[1])){
+ 								northORsouth = north;
+ 							}
+	 						else{
+ 								northORsouth = 	Math.sqrt(Math.pow(north[1]-destinationC, 2)+Math.pow(north[0]-destinationL,2)) >
+ 												Math.sqrt(Math.pow(south[1]-destinationC, 2)+Math.pow(south[0]-destinationL,2)) ?
+ 												south : north;
+ 							}
+	 						
+	 						if((actualPath.contains((west[0]*columns)+west[1]) && actualPath.contains((east[0]*columns)+east[1])) || (west[0] == -1 && east[0] == -1)){
+	 							westOReast[0] = -1;
+	 							westOReast[1] = -1;
+ 							}
+ 							else if((actualPath.contains((west[0]*columns)+west[1]) || west[0] == -1) && !actualPath.contains((east[0]*columns)+east[1])){
+ 								westOReast = east;
+ 							}
+ 							else if((actualPath.contains((east[0]*columns)+east[1]) || east[0] == -1) && !actualPath.contains((west[0]*columns)+west[1])){
+ 								westOReast = west;
+ 							}
+	 						else{
+	 							westOReast = 	Math.sqrt(Math.pow(west[1]-destinationC, 2)+Math.pow(west[0]-destinationL,2)) >
+ 												Math.sqrt(Math.pow(east[1]-destinationC, 2)+Math.pow(east[0]-destinationL,2)) ?
+ 												east : west;
+ 							}
+	 						
+	 						// Tomada de decisao: por onde ir a partir de onde esta
+	 						int decision[] = new int[2];
+	 						
+	 						if(northORsouth[0] == -1 && westOReast[0] == -1){
+	 							decision[0] = -1;
+	 							decision[1] = -1;
+	 						}
+	 						else if(northORsouth[0] == -1){
+	 							decision = westOReast;
+	 						}
+	 						else if(westOReast[0] == -1){
+	 							decision = northORsouth;
+	 						}
+	 						else{
+	 							decision = 	Math.sqrt(Math.pow(northORsouth[1]-destinationC, 2)+Math.pow(northORsouth[0]-destinationL,2)) >
+											Math.sqrt(Math.pow(westOReast[1]-destinationC, 2)+Math.pow(westOReast[0]-destinationL,2)) ?
+											westOReast : northORsouth;
+	 						}
+	 						
+//	 						System.out.println("Decision: " + decision[0] + ", " + decision[1] + "(" + ((decision[0]*columns)+decision[1]) + ")\n");
+//	 						new java.util.Scanner(System.in).nextLine();
+	 						if(decision[0] == -1){
+	 							actualPath.add(-1);
+	 						}
+	 						else if(decision == north){
+ 								while(auxL != north[0]){
+ 									auxL--;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								while(auxC != north[1]){
+ 									auxC = auxC > north[1] ? auxC-1 : auxC+1;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								if(actualPath.contains((destinationL*columns)+destinationC)){break;}
+ 							}
+ 							else if(decision == south){
+ 								while(auxL != south[0]){
+ 									auxL++;
+ 									actualPath.add((auxL*columns)+auxC);
+ 								}
+ 								while(auxC != south[1]){
+ 									auxC = auxC > south[1] ? auxC-1 : auxC+1;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								if(actualPath.contains((destinationL*columns)+destinationC)){break;}
+ 							}
+ 							else if(decision == west){
+ 								while(auxC != west[1]){
+ 									auxC--;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								while(auxL != west[0]){
+ 									auxL = auxL > west[0] ? auxL-1 : auxL+1;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								if(actualPath.contains((destinationL*columns)+destinationC)){break;}
+ 							}
+ 							else{
+ 								while(auxC != east[1]){
+ 									auxC++;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								while(auxL != east[0]){
+ 									auxL = auxL > east[0] ? auxL-1 : auxL+1;
+ 									actualPath.add((auxL*columns)+auxC);
+ 									if((auxL*columns)+auxC == (destinationL*columns)+destinationC){break;}
+ 								}
+ 								if(actualPath.contains((destinationL*columns)+destinationC)){break;}
+ 							}
+	 					}
+	 				}
+					
+					int[] ap = new int[actualPath.size()];
+					int indice = 0;
+					for (Integer n : actualPath) {
+						ap[indice++] = n;
+					}
+					paths.add(ap); // adiciona o caminho no vetor que guarda os resultados
+				}
+			}
+		}
+		
+		ArrayList<int[]> resultado_aux = new ArrayList<int[]>();
+		for(int i = 0; i<paths.size(); i++){
+			ArrayList<Integer> aux_al = new ArrayList<Integer>();
+			aux_al.add(headsNTails.get(i)[0]);
+			aux_al.add(headsNTails.get(i)[1]);
+			for(int j = 0; j<paths.get(i).length; j++){
+				aux_al.add(paths.get(i)[j]);
+			}
+			
+			int[] aux_v = new int[aux_al.size()];
+			int indice = 0;
+			for (Integer n : aux_al) {
+				aux_v[indice++] = n;
+			}
+			resultado_aux.add(aux_v);
+		}
+		
+		int[][] resultado =  new int[resultado_aux.size()][];
+		for(int i = 0; i < resultado_aux.size(); i++){
+			resultado[i] = resultado_aux.get(i);
+		}
+		
 		return resultado;
 	}
 }

@@ -11,13 +11,13 @@ public class Aplicação {
 		Statistic statistic = new Statistic();
 		int[] routersUsage;
 		double[] routersUsagePercent;
-		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/7x7.txt");
+		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/6x6.txt");
 		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/1to1.txt");
 		Grid grid = new Grid(adjacencyMatrix);
 		
 		{
-			grid.injectFaultListByNode(new int[]{1,8,19,47,12,22,29,36,37,38,39,17,24,40,33,26});
-			grid.allocateAppByRouter(1, 0);
+			grid.injectFaultListByNode(new int[]{2, 14, 17, 20, 26, 35});
+			grid.allocateAppByRouter(1, 5);
 			grid.allocateAppByRouter(0, 0);
 		}
 		
@@ -31,6 +31,14 @@ public class Aplicação {
 		
 		long tempo;
 		
+		tempo = System.currentTimeMillis();
+		int[][] GridParametrizavel = grid.ParametrizavelPadrao(communicationMatrix,2);
+		tempo = System.currentTimeMillis()-tempo;
+		routersUsage = statistic.routersUsage(adjacencyMatrix, GridParametrizavel);
+		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridParametrizavel, routersUsage);
+		mfw.printAll("resultados/Grid Parametrizavel Padrao.txt", "Parametrizavel Padrão", grid, routersUsage, routersUsagePercent, tempo, GridParametrizavel);
+		System.out.print("Parametrizavel Padrão OK\n");
+		/*
 		tempo = System.currentTimeMillis();
 		int[][] GridDijkstra = grid.Dijkstra(communicationMatrix);
 		tempo = System.currentTimeMillis()-tempo;
@@ -46,7 +54,7 @@ public class Aplicação {
 		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridXXYYPadrao, routersUsage);
 		mfw.printAll("resultados/Grid XXYY Padrão.txt", "XXYY Padrão não adaptativo", grid, routersUsage, routersUsagePercent, tempo, GridXXYYPadrao);
 		System.out.print("XXYY Padrão OK\n");
-		/*
+		
 		tempo = System.currentTimeMillis();
 		int[][] GridXYTorus = grid.XYTorus(communicationMatrix);
 		tempo = System.currentTimeMillis()-tempo;
