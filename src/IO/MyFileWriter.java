@@ -92,6 +92,7 @@ public class MyFileWriter {
 				for (int j=2; j < communications[i].length; j++){
 					file.write(communications[i][j] + " ");	
 				}
+				file.write("(" + ((communications[i].length-3)) + " saltos ~ " + ((communications[i].length-3)*3) + " ciclos)");	
 			}
 			else{
 				file.write("Não foi possível encontrar um caminho para realizar essa comunicação");	

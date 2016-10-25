@@ -1422,7 +1422,7 @@ public class Grid {
 					destinationL = destinationPos[0]; 			// Busca a posicao da aplicacao
 					destinationC = destinationPos[1];			// conectada a i que foi encontrada
 					int[] headNTail = {source, destination};	// Vetor que vai guardar o caminho feito entre i e j;
-					System.out.println("Source: " + source + " | Destination: " + destination);
+//					System.out.println("Source: " + source + " | Destination: " + destination);
 												// Node inicial (i) 
 												// Node final (j)	
 												// "Caminho de i para j:"
@@ -1443,8 +1443,6 @@ public class Grid {
 					int south[] = new int[2]; 	// posicao mais proxima do destino que pode-se chegar indo por baixo
 					int west[] = new int[2];	// posicao mais proxima do destino que pode-se chegar indo pela esquerda
 					int east[] = new int[2];	// posicao mais proxima do destino que pode-se chegar indo pela direita
-					
-					System.out.println(source + " " + destination);
 					
 					if(!actualPath.contains(-1)){ // se o router source estiver funcionando...
 	 					while(!actualPath.contains((destinationL*columns)+destinationC) && !actualPath.contains(-1)){ 	// Enquanto não se atingir o destino ou
@@ -2054,8 +2052,8 @@ public class Grid {
 		}
 		
 		int[][] resultado =  new int[resultado_aux.size()][]; 	// convertendo o arrayList de vetores de inteiros
-		for(int i = 0; i < resultado_aux.size(); i++){			// "resultado_aux" para uma matriz de inteiros
-			resultado[i] = resultado_aux.get(i);				// "resultado"
+		for(int i = 0; i < resultado_aux.size(); i++){			// para a matriz de inteiros "resultado"
+			resultado[i] = resultado_aux.get(i);
 		}
 		
 		return resultado; // retorna a matriz de inteiros resultado;

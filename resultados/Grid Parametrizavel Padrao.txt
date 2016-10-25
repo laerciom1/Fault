@@ -2,7 +2,7 @@
 
 -- Uso dos roteadores [Qtd de comunicações que usam cada roteador]
 
-Router 0: 0		|	Router 1: 1		|	Router 2: 1		|	Router 3: 1		|	Router 4: 1		|	Router 5: 0
+Router 0: 0		|	Router 1: 1		|	Router 2: 1		|	Router 3: 1		|	Router 4: 0		|	Router 5: 0
 Router 6: 0		|	Router 7: 0		|	Router 8: 0		|	Router 9: 1		|	Router 10: 0	|	Router 11: 0
 Router 12: 0	|	Router 13: 0	|	Router 14: 0	|	Router 15: 0	|	Router 16: 0	|	Router 17: 1
 Router 18: 2	|	Router 19: 1	|	Router 20: 0	|	Router 21: 0	|	Router 22: 0	|	Router 23: 0
@@ -16,7 +16,7 @@ Router 60: 0	|	Router 61: 0	|	Router 62: 0	|	Router 63: 0	|
 
 -- Uso dos roteadores [Qtd de comunicações que usam cada roteador/Total de comunicações]
 
-Router 0: 0,00		|	Router 1: 100,00	|	Router 2: 100,00	|	Router 3: 100,00	|	Router 4: 100,00	|	Router 5: 0,00
+Router 0: 0,00		|	Router 1: 100,00	|	Router 2: 100,00	|	Router 3: 100,00	|	Router 4: 0,00		|	Router 5: 0,00
 Router 6: 0,00		|	Router 7: 0,00		|	Router 8: 0,00		|	Router 9: 100,00	|	Router 10: 0,00		|	Router 11: 0,00
 Router 12: 0,00		|	Router 13: 0,00		|	Router 14: 0,00		|	Router 15: 0,00		|	Router 16: 0,00		|	Router 17: 100,00
 Router 18: 200,00	|	Router 19: 100,00	|	Router 20: 0,00		|	Router 21: 0,00		|	Router 22: 0,00		|	Router 23: 0,00
@@ -36,7 +36,7 @@ Router 60: 0,00		|	Router 61: 0,00		|	Router 62: 0,00		|	Router 63: 0,00		|
 
 -- Foram avaliadas 1 comunicacoes:
 
-App 1 to App 0 > Path: 34 26 18 19 18 17 9 1 2 3 4 
+App 1 to App 0 > Path: 34 26 18 19 18 17 9 1 2 3 (9 saltos ~ 27 ciclos)
 
 
--- Tempo de execução: 1 ms.
+-- Tempo de execução: 0 ms.
