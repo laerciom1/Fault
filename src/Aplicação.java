@@ -11,20 +11,20 @@ public class Aplicação {
 		Statistic statistic = new Statistic();
 		int[] routersUsage;
 		double[] routersUsagePercent;
-		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/8x8.txt");
-		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/50tasks.txt");
+		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/4x4.txt");
+		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/1to1.txt");
 		Grid grid = new Grid(adjacencyMatrix);
 		
-//		{
-//			grid.injectFaultListByNode(new int[]{1,3,4,9,16,18,20,32,35,42,43,44,47,52,53,54,57,58,59});
-//			grid.allocateAppByRouter(1, 17);
-//			grid.allocateAppByRouter(0, 63);
-//		}
-		
 		{
-			grid.injectFaultsByPercentage(30);
-			grid.allocateAppsRand(communicationMatrix.getTasks());
+			grid.injectFaultListByNode(new int[]{14});
+			grid.allocateAppByRouter(1, 0);
+			grid.allocateAppByRouter(0, 15);
 		}
+		
+//		{
+//			grid.injectFaultsByPercentage(30);
+//			grid.allocateAppsRand(communicationMatrix.getTasks());
+//		}
 		
 		//grid.allocateAppsSeq(communicationMatrix.getTasks());
 		grid.paintGrid();
@@ -32,12 +32,19 @@ public class Aplicação {
 		long tempo;
 		
 		tempo = System.currentTimeMillis();
-		int[][] GridParametrizavel = grid.ParametrizavelPadrao(communicationMatrix,4);		
+		int[][] GridParametrizavel = grid.Dijkstra(communicationMatrix);		
 		tempo = System.currentTimeMillis()-tempo;
 		routersUsage = statistic.routersUsage(adjacencyMatrix, GridParametrizavel);
 		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridParametrizavel, routersUsage);
 		mfw.printAll("resultados/Grid Parametrizavel Padrao.txt", "Parametrizavel Padrão", grid, routersUsage, routersUsagePercent, tempo, GridParametrizavel);
 		System.out.print("Parametrizavel Padrão OK\n");
+		
+		for(int i = 0; i < GridParametrizavel.length; i++){
+			for(int j = 0; j < GridParametrizavel[i].length; j++){
+				System.out.print(GridParametrizavel[i][j] + " ");
+			}
+			System.out.println(" ");
+		}
 		/*
 		tempo = System.currentTimeMillis();
 		int[][] GridDijkstra = grid.Dijkstra(communicationMatrix);

@@ -74,9 +74,8 @@ public class Grid {
 	}
 	
 	public void allocateAppsRand(int apps){
-		int remaining = apps; // N aplicacoes
 		deallocateApps();
-	
+		int remaining = apps; // N aplicacoes	
 		boolean allocated;
 		int full_level = columns*lines-faults;
 		int requisito = 1;
@@ -107,6 +106,14 @@ public class Grid {
 		}
 	}
 	
+	public void resetFaults(){
+		for(int i = 0; i < lines; i++){
+			for(int j = 0; j < columns; j++){
+				grid[i][j].setWorking(true);;
+			}
+		}
+	}
+	
 	public void injectFaultByNode(int router){
 		if(grid[(router/columns)][(router%columns)].isWorking()){
 			grid[(router/columns)][(router%columns)].setWorking(false);
@@ -129,8 +136,8 @@ public class Grid {
 	}
 	
 	public void injectFaultsByPercentage(double percentage){
+		resetFaults();
 		int faults_aux = (int) ((lines*columns*percentage)/100);
-		faults_aux -= faults;
 		faults = faults_aux;
 		boolean injected;
 		int randomRouter;
@@ -1422,7 +1429,7 @@ public class Grid {
 					destinationL = destinationPos[0]; 			// Busca a posicao da aplicacao
 					destinationC = destinationPos[1];			// conectada a i que foi encontrada
 					int[] headNTail = {source, destination};	// Vetor que vai guardar o caminho feito entre i e j;
-					System.out.println("Source: " + source + " | Destination: " + destination);
+//					System.out.println("Source: " + source + " | Destination: " + destination);
 												// Node inicial (i) 
 												// Node final (j)	
 												// "Caminho de i para j:"
