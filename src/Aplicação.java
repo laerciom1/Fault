@@ -12,19 +12,19 @@ public class Aplicação {
 		int[] routersUsage;
 		double[] routersUsagePercent;
 		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/8x8.txt");
-		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/1to1.txt");
+		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/50tasks.txt");
 		Grid grid = new Grid(adjacencyMatrix);
 		
-		{
-			grid.injectFaultListByNode(new int[]{0,5,6,8,10,11,12,22,24,29,32,35,44,50,51,52,55,60,62});
-			grid.allocateAppByRouter(1, 34);
-			grid.allocateAppByRouter(0, 3);
-		}
-		
 //		{
-//			grid.injectFaultsByPercentage(30);
-//			grid.allocateAppsRand(communicationMatrix.getTasks());
+//			grid.injectFaultListByNode(new int[]{1,3,4,9,16,18,20,32,35,42,43,44,47,52,53,54,57,58,59});
+//			grid.allocateAppByRouter(1, 17);
+//			grid.allocateAppByRouter(0, 63);
 //		}
+		
+		{
+			grid.injectFaultsByPercentage(30);
+			grid.allocateAppsRand(communicationMatrix.getTasks());
+		}
 		
 		//grid.allocateAppsSeq(communicationMatrix.getTasks());
 		grid.paintGrid();
@@ -38,7 +38,7 @@ public class Aplicação {
 		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridParametrizavel, routersUsage);
 		mfw.printAll("resultados/Grid Parametrizavel Padrao.txt", "Parametrizavel Padrão", grid, routersUsage, routersUsagePercent, tempo, GridParametrizavel);
 		System.out.print("Parametrizavel Padrão OK\n");
-
+		/*
 		tempo = System.currentTimeMillis();
 		int[][] GridDijkstra = grid.Dijkstra(communicationMatrix);
 		tempo = System.currentTimeMillis()-tempo;
@@ -46,7 +46,7 @@ public class Aplicação {
 		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridDijkstra, routersUsage);
 		mfw.printAll("resultados/Grid Dijkstra Padrao.txt", "Dijkstra Padrão", grid, routersUsage, routersUsagePercent, tempo, GridDijkstra);
 		System.out.print("Dijkstra Padrão OK\n");
-		/*
+		
 		tempo = System.currentTimeMillis();
 		int[][] GridXXYYPadrao = grid.XXYYPadrao(communicationMatrix);
 		tempo = System.currentTimeMillis()-tempo;

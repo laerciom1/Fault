@@ -2,41 +2,290 @@
 
 -- Uso dos roteadores [Qtd de comunicações que usam cada roteador]
 
-Router 0: 0		|	Router 1: 1		|	Router 2: 1		|	Router 3: 1		|	Router 4: 0		|	Router 5: 0
-Router 6: 0		|	Router 7: 0		|	Router 8: 0		|	Router 9: 1		|	Router 10: 0	|	Router 11: 0
-Router 12: 0	|	Router 13: 0	|	Router 14: 0	|	Router 15: 0	|	Router 16: 0	|	Router 17: 1
-Router 18: 1	|	Router 19: 0	|	Router 20: 0	|	Router 21: 0	|	Router 22: 0	|	Router 23: 0
-Router 24: 0	|	Router 25: 0	|	Router 26: 1	|	Router 27: 0	|	Router 28: 0	|	Router 29: 0
-Router 30: 0	|	Router 31: 0	|	Router 32: 0	|	Router 33: 0	|	Router 34: 1	|	Router 35: 0
-Router 36: 0	|	Router 37: 0	|	Router 38: 0	|	Router 39: 0	|	Router 40: 0	|	Router 41: 0
-Router 42: 0	|	Router 43: 0	|	Router 44: 0	|	Router 45: 0	|	Router 46: 0	|	Router 47: 0
-Router 48: 0	|	Router 49: 0	|	Router 50: 0	|	Router 51: 0	|	Router 52: 0	|	Router 53: 0
-Router 54: 0	|	Router 55: 0	|	Router 56: 0	|	Router 57: 0	|	Router 58: 0	|	Router 59: 0
-Router 60: 0	|	Router 61: 0	|	Router 62: 0	|	Router 63: 0	|	
+Router 0: 12		|	Router 1: 0		|	Router 2: 16		|	Router 3: 0		|	Router 4: 0		|	Router 5: 10
+Router 6: 8		|	Router 7: 0		|	Router 8: 27		|	Router 9: 36		|	Router 10: 27	|	Router 11: 0
+Router 12: 23	|	Router 13: 40	|	Router 14: 22	|	Router 15: 27	|	Router 16: 0	|	Router 17: 44
+Router 18: 50	|	Router 19: 8	|	Router 20: 0	|	Router 21: 126	|	Router 22: 98	|	Router 23: 91
+Router 24: 15	|	Router 25: 37	|	Router 26: 55	|	Router 27: 0	|	Router 28: 123	|	Router 29: 123
+Router 30: 0	|	Router 31: 73	|	Router 32: 22	|	Router 33: 43	|	Router 34: 61	|	Router 35: 0
+Router 36: 120	|	Router 37: 0	|	Router 38: 0	|	Router 39: 67	|	Router 40: 26	|	Router 41: 58
+Router 42: 115	|	Router 43: 112	|	Router 44: 115	|	Router 45: 0	|	Router 46: 8	|	Router 47: 58
+Router 48: 8	|	Router 49: 17	|	Router 50: 17	|	Router 51: 0	|	Router 52: 0	|	Router 53: 10
+Router 54: 0	|	Router 55: 46	|	Router 56: 0	|	Router 57: 6	|	Router 58: 0	|	Router 59: 0
+Router 60: 0	|	Router 61: 19	|	Router 62: 30	|	Router 63: 36	|	
 
 -- Uso dos roteadores [Qtd de comunicações que usam cada roteador/Total de comunicações]
 
-Router 0: 0,00		|	Router 1: 100,00	|	Router 2: 100,00	|	Router 3: 100,00	|	Router 4: 0,00		|	Router 5: 0,00
-Router 6: 0,00		|	Router 7: 0,00		|	Router 8: 0,00		|	Router 9: 100,00	|	Router 10: 0,00		|	Router 11: 0,00
-Router 12: 0,00		|	Router 13: 0,00		|	Router 14: 0,00		|	Router 15: 0,00		|	Router 16: 0,00		|	Router 17: 100,00
-Router 18: 100,00	|	Router 19: 0,00		|	Router 20: 0,00		|	Router 21: 0,00		|	Router 22: 0,00		|	Router 23: 0,00
-Router 24: 0,00		|	Router 25: 0,00		|	Router 26: 100,00	|	Router 27: 0,00		|	Router 28: 0,00		|	Router 29: 0,00
-Router 30: 0,00		|	Router 31: 0,00		|	Router 32: 0,00		|	Router 33: 0,00		|	Router 34: 100,00	|	Router 35: 0,00
-Router 36: 0,00		|	Router 37: 0,00		|	Router 38: 0,00		|	Router 39: 0,00		|	Router 40: 0,00		|	Router 41: 0,00
-Router 42: 0,00		|	Router 43: 0,00		|	Router 44: 0,00		|	Router 45: 0,00		|	Router 46: 0,00		|	Router 47: 0,00
-Router 48: 0,00		|	Router 49: 0,00		|	Router 50: 0,00		|	Router 51: 0,00		|	Router 52: 0,00		|	Router 53: 0,00
-Router 54: 0,00		|	Router 55: 0,00		|	Router 56: 0,00		|	Router 57: 0,00		|	Router 58: 0,00		|	Router 59: 0,00
-Router 60: 0,00		|	Router 61: 0,00		|	Router 62: 0,00		|	Router 63: 0,00		|	
+Router 0: 4,80		|	Router 1: 0,00		|	Router 2: 6,40		|	Router 3: 0,00		|	Router 4: 0,00		|	Router 5: 4,00
+Router 6: 3,20		|	Router 7: 0,00		|	Router 8: 10,80		|	Router 9: 14,40		|	Router 10: 10,80	|	Router 11: 0,00
+Router 12: 9,20		|	Router 13: 16,00	|	Router 14: 8,80		|	Router 15: 10,80	|	Router 16: 0,00		|	Router 17: 17,60
+Router 18: 20,00	|	Router 19: 3,20		|	Router 20: 0,00		|	Router 21: 50,40	|	Router 22: 39,20	|	Router 23: 36,40
+Router 24: 6,00		|	Router 25: 14,80	|	Router 26: 22,00	|	Router 27: 0,00		|	Router 28: 49,20	|	Router 29: 49,20
+Router 30: 0,00		|	Router 31: 29,20	|	Router 32: 8,80		|	Router 33: 17,20	|	Router 34: 24,40	|	Router 35: 0,00
+Router 36: 48,00	|	Router 37: 0,00		|	Router 38: 0,00		|	Router 39: 26,80	|	Router 40: 10,40	|	Router 41: 23,20
+Router 42: 46,00	|	Router 43: 44,80	|	Router 44: 46,00	|	Router 45: 0,00		|	Router 46: 3,20		|	Router 47: 23,20
+Router 48: 3,20		|	Router 49: 6,80		|	Router 50: 6,80		|	Router 51: 0,00		|	Router 52: 0,00		|	Router 53: 4,00
+Router 54: 0,00		|	Router 55: 18,40	|	Router 56: 0,00		|	Router 57: 2,40		|	Router 58: 0,00		|	Router 59: 0,00
+Router 60: 0,00		|	Router 61: 7,60		|	Router 62: 12,00	|	Router 63: 14,40	|	
 
 -- Falhas injetadas: 19.
 
--- 1 Comunicação tiveram sucesso.
--- Porcentagem de falha: 0.0
+-- 242 Comunicação tiveram sucesso.
+-- Porcentagem de falha: 3.0
 
 
--- Foram avaliadas 1 comunicacoes:
+-- Foram avaliadas 250 comunicacoes:
 
-App 1 to App 0 > Path: 34 26 18 17 9 1 2 3 (7 saltos ~ 21 ciclos)
+App 1 to App 5 > Path: 34 42 43 44 36 28 29 21 22 (8 saltos ~ 24 ciclos)
+App 1 to App 8 > Path: 34 26 18 10 (3 saltos ~ 9 ciclos)
+App 1 to App 21 > Path: 34 42 43 44 36 28 29 21 13 5 (9 saltos ~ 27 ciclos)
+App 1 to App 24 > Path: 34 42 43 44 36 28 (5 saltos ~ 15 ciclos)
+App 1 to App 50 > Path: 34 42 43 44 36 28 29 21 22 23 (9 saltos ~ 27 ciclos)
+App 2 to App 0 > Path: 15 23 22 21 29 28 36 44 43 42 41 40 32 24 (13 saltos ~ 39 ciclos)
+App 2 to App 7 > Path: 15 23 31 39 47 55 63 62 61 (8 saltos ~ 24 ciclos)
+App 2 to App 8 > Path: 15 23 22 21 29 28 36 44 43 42 34 26 18 10 (13 saltos ~ 39 ciclos)
+App 2 to App 34 > Path: 15 23 22 21 29 28 36 44 (7 saltos ~ 21 ciclos)
+App 2 to App 46 > Path: 15 (0 saltos ~ 0 ciclos)
+App 3 to App 3 > Path: 8 (0 saltos ~ 0 ciclos)
+App 3 to App 9 > Path: 8 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 39 47 (17 saltos ~ 51 ciclos)
+App 3 to App 16 > Path: 8 9 17 (2 saltos ~ 6 ciclos)
+App 3 to App 32 > Path: 8 9 17 25 24 (4 saltos ~ 12 ciclos)
+App 3 to App 38 > Path: 8 9 17 25 33 41 42 43 (7 saltos ~ 21 ciclos)
+App 4 to App 0 > Path: 12 13 21 29 28 36 44 43 42 41 40 32 24 (12 saltos ~ 36 ciclos)
+App 4 to App 15 > Path: 12 13 21 29 28 36 44 43 42 41 33 (10 saltos ~ 30 ciclos)
+App 4 to App 30 > Path: 12 13 14 15 23 31 (5 saltos ~ 15 ciclos)
+App 4 to App 31 > Path: 12 13 21 29 28 36 44 43 42 34 26 18 (11 saltos ~ 33 ciclos)
+App 4 to App 34 > Path: 12 13 21 29 28 36 44 (6 saltos ~ 18 ciclos)
+App 5 to App 6 > Path: 22 23 31 39 47 55 (5 saltos ~ 15 ciclos)
+App 5 to App 23 > Path: 22 21 29 28 36 44 43 42 34 26 18 10 2 (12 saltos ~ 36 ciclos)
+App 5 to App 25 > Path: 22 21 29 28 36 44 43 42 34 26 18 17 9 8 (13 saltos ~ 39 ciclos)
+App 5 to App 36 > Path: 22 14 6 (2 saltos ~ 6 ciclos)
+App 5 to App 42 > Path: 22 21 29 28 36 44 43 42 34 26 18 19 (11 saltos ~ 33 ciclos)
+App 6 to App 4 > Path: 55 47 39 31 23 22 21 13 12 (8 saltos ~ 24 ciclos)
+App 6 to App 21 > Path: 55 47 39 31 23 15 14 6 5 (8 saltos ~ 24 ciclos)
+App 6 to App 26 > Path: 55 47 39 31 23 22 21 29 (7 saltos ~ 21 ciclos)
+App 6 to App 33 > Path: 55 47 39 31 23 22 21 13 12 (8 saltos ~ 24 ciclos)
+App 6 to App 40 > Path: 55 63 (1 saltos ~ 3 ciclos)
+App 7 to App 8 > Path: 61 62 63 55 47 39 31 23 22 21 29 28 36 44 43 42 34 26 18 10 (19 saltos ~ 57 ciclos)
+App 7 to App 18 > Path: 61 62 63 55 47 39 (5 saltos ~ 15 ciclos)
+App 7 to App 33 > Path: 61 62 63 55 47 39 31 23 22 21 13 12 (11 saltos ~ 33 ciclos)
+App 7 to App 35 > Path: 61 62 63 55 47 39 31 23 22 21 29 28 36 44 43 42 34 26 (17 saltos ~ 51 ciclos)
+App 7 to App 50 > Path: 61 62 63 55 47 39 31 23 (7 saltos ~ 21 ciclos)
+App 8 to App 8 > Path: 10 (0 saltos ~ 0 ciclos)
+App 8 to App 17 > Path: 10 18 26 34 42 50 49 48 (7 saltos ~ 21 ciclos)
+App 8 to App 18 > Path: 10 18 26 34 42 43 44 36 28 29 21 22 23 31 39 (14 saltos ~ 42 ciclos)
+App 8 to App 23 > Path: 10 2 (1 saltos ~ 3 ciclos)
+App 8 to App 37 > Path: 10 18 26 34 42 43 44 36 28 29 21 22 23 31 39 47 55 63 62 (18 saltos ~ 54 ciclos)
+App 9 to App 16 > Path: 47 39 31 23 22 21 29 28 36 44 43 42 34 26 18 17 (15 saltos ~ 45 ciclos)
+App 9 to App 34 > Path: 47 39 31 23 22 21 29 28 36 44 (9 saltos ~ 27 ciclos)
+App 9 to App 37 > Path: 47 55 63 62 (3 saltos ~ 9 ciclos)
+App 9 to App 43 > Path: 47 55 63 62 61 53 (5 saltos ~ 15 ciclos)
+App 9 to App 50 > Path: 47 39 31 23 (3 saltos ~ 9 ciclos)
+App 10 to App 7 > Path: 42 43 44 36 28 29 21 22 23 31 39 47 55 63 62 61 (15 saltos ~ 45 ciclos)
+App 10 to App 18 > Path: 42 43 44 36 28 29 21 22 23 31 39 (10 saltos ~ 30 ciclos)
+App 10 to App 23 > Path: 42 34 26 18 10 2 (5 saltos ~ 15 ciclos)
+App 10 to App 28 > Path: 42 43 44 36 28 29 21 22 14 (8 saltos ~ 24 ciclos)
+App 10 to App 29 > Path: 42 34 26 18 17 9 (5 saltos ~ 15 ciclos)
+App 11 to App 1 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 11 to App 14 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 11 to App 19 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 11 to App 26 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 11 to App 27 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 12 to App 0 > Path: 34 33 32 24 (3 saltos ~ 9 ciclos)
+App 12 to App 15 > Path: 34 33 (1 saltos ~ 3 ciclos)
+App 12 to App 21 > Path: 34 42 43 44 36 28 29 21 13 5 (9 saltos ~ 27 ciclos)
+App 12 to App 44 > Path: 34 26 18 17 9 8 0 (6 saltos ~ 18 ciclos)
+App 12 to App 50 > Path: 34 42 43 44 36 28 29 21 22 23 (9 saltos ~ 27 ciclos)
+App 13 to App 1 > Path: 46 47 39 31 23 22 21 29 28 36 44 43 42 34 (13 saltos ~ 39 ciclos)
+App 13 to App 12 > Path: 46 47 39 31 23 22 21 29 28 36 44 43 42 34 (13 saltos ~ 39 ciclos)
+App 13 to App 14 > Path: 46 47 39 31 23 22 21 13 (7 saltos ~ 21 ciclos)
+App 13 to App 41 > Path: 46 47 39 31 23 22 21 29 28 36 44 43 42 50 (13 saltos ~ 39 ciclos)
+App 13 to App 49 > Path: 46 47 39 31 23 22 21 29 28 36 (9 saltos ~ 27 ciclos)
+App 14 to App 7 > Path: 13 14 15 23 31 39 47 55 63 62 61 (10 saltos ~ 30 ciclos)
+App 14 to App 22 > Path: 13 21 29 28 36 44 43 42 50 49 57 (10 saltos ~ 30 ciclos)
+App 14 to App 23 > Path: 13 21 29 28 36 44 43 42 34 26 18 10 2 (12 saltos ~ 36 ciclos)
+App 14 to App 26 > Path: 13 21 29 (2 saltos ~ 6 ciclos)
+App 14 to App 37 > Path: 13 14 15 23 31 39 47 55 63 62 (9 saltos ~ 27 ciclos)
+App 15 to App 5 > Path: 33 41 42 43 44 36 28 29 21 22 (9 saltos ~ 27 ciclos)
+App 15 to App 8 > Path: 33 34 26 18 10 (4 saltos ~ 12 ciclos)
+App 15 to App 14 > Path: 33 41 42 43 44 36 28 29 21 13 (9 saltos ~ 27 ciclos)
+App 15 to App 16 > Path: 33 25 17 (2 saltos ~ 6 ciclos)
+App 15 to App 33 > Path: 33 41 42 43 44 36 28 29 21 13 12 (10 saltos ~ 30 ciclos)
+App 16 to App 5 > Path: 17 25 33 41 42 43 44 36 28 29 21 22 (11 saltos ~ 33 ciclos)
+App 16 to App 25 > Path: 17 9 8 (2 saltos ~ 6 ciclos)
+App 16 to App 26 > Path: 17 25 33 41 42 43 44 36 28 29 (9 saltos ~ 27 ciclos)
+App 16 to App 47 > Path: 17 25 33 41 49 (4 saltos ~ 12 ciclos)
+App 16 to App 48 > Path: 17 25 (1 saltos ~ 3 ciclos)
+App 17 to App 15 > Path: 48 49 41 33 (3 saltos ~ 9 ciclos)
+App 17 to App 19 > Path: 48 40 (1 saltos ~ 3 ciclos)
+App 17 to App 23 > Path: 48 49 50 42 34 26 18 10 2 (8 saltos ~ 24 ciclos)
+App 17 to App 32 > Path: 48 40 32 24 (3 saltos ~ 9 ciclos)
+App 17 to App 44 > Path: 48 49 41 33 25 17 9 8 0 (8 saltos ~ 24 ciclos)
+App 18 to App 13 > Path: 39 47 46 (2 saltos ~ 6 ciclos)
+App 18 to App 19 > Path: 39 31 23 22 21 29 28 36 44 43 42 41 40 (12 saltos ~ 36 ciclos)
+App 18 to App 29 > Path: 39 31 23 22 21 29 28 36 44 43 42 34 26 18 17 9 (15 saltos ~ 45 ciclos)
+App 18 to App 32 > Path: 39 31 23 22 21 29 28 36 44 43 42 41 40 32 24 (14 saltos ~ 42 ciclos)
+App 18 to App 48 > Path: 39 31 23 22 21 29 28 36 44 43 42 34 26 25 (13 saltos ~ 39 ciclos)
+App 19 to App 8 > Path: 40 41 42 34 26 18 10 (6 saltos ~ 18 ciclos)
+App 19 to App 19 > Path: 40 (0 saltos ~ 0 ciclos)
+App 19 to App 21 > Path: 40 41 42 43 44 36 28 29 21 13 5 (10 saltos ~ 30 ciclos)
+App 19 to App 32 > Path: 40 32 24 (2 saltos ~ 6 ciclos)
+App 19 to App 44 > Path: 40 41 33 25 17 9 8 0 (7 saltos ~ 21 ciclos)
+App 20 to App 8 > Path: 32 33 34 26 18 10 (5 saltos ~ 15 ciclos)
+App 20 to App 23 > Path: 32 33 34 26 18 10 2 (6 saltos ~ 18 ciclos)
+App 20 to App 29 > Path: 32 33 25 17 9 (4 saltos ~ 12 ciclos)
+App 20 to App 39 > Path: 32 40 41 42 43 44 36 28 29 21 (9 saltos ~ 27 ciclos)
+App 20 to App 49 > Path: 32 40 41 42 43 44 36 (6 saltos ~ 18 ciclos)
+App 21 to App 20 > Path: 5 13 21 29 28 36 44 43 42 41 40 32 (11 saltos ~ 33 ciclos)
+App 21 to App 33 > Path: 5 13 12 (2 saltos ~ 6 ciclos)
+App 21 to App 38 > Path: 5 13 21 29 28 36 44 43 (7 saltos ~ 21 ciclos)
+App 21 to App 45 > Path: 5 13 21 22 (3 saltos ~ 9 ciclos)
+App 21 to App 49 > Path: 5 13 21 29 28 36 (5 saltos ~ 15 ciclos)
+App 22 to App 4 > Path: 57 49 50 42 43 44 36 28 29 21 13 12 (11 saltos ~ 33 ciclos)
+App 22 to App 22 > Path: 57 (0 saltos ~ 0 ciclos)
+App 22 to App 26 > Path: 57 49 50 42 43 44 36 28 29 (8 saltos ~ 24 ciclos)
+App 22 to App 33 > Path: 57 49 50 42 43 44 36 28 29 21 13 12 (11 saltos ~ 33 ciclos)
+App 22 to App 44 > Path: 57 49 41 33 25 17 9 8 0 (8 saltos ~ 24 ciclos)
+App 23 to App 31 > Path: 2 10 18 (2 saltos ~ 6 ciclos)
+App 23 to App 33 > Path: 2 10 18 26 34 42 43 44 36 28 29 21 13 12 (13 saltos ~ 39 ciclos)
+App 23 to App 35 > Path: 2 10 18 26 (3 saltos ~ 9 ciclos)
+App 23 to App 43 > Path: 2 10 18 26 34 42 43 44 36 28 29 21 22 23 31 39 47 55 63 62 61 53 (21 saltos ~ 63 ciclos)
+App 23 to App 50 > Path: 2 10 18 26 34 42 43 44 36 28 29 21 22 23 (13 saltos ~ 39 ciclos)
+App 24 to App 2 > Path: 28 29 21 22 23 15 (5 saltos ~ 15 ciclos)
+App 24 to App 4 > Path: 28 29 21 13 12 (4 saltos ~ 12 ciclos)
+App 24 to App 5 > Path: 28 29 21 22 (3 saltos ~ 9 ciclos)
+App 24 to App 6 > Path: 28 29 21 22 23 31 39 47 55 (8 saltos ~ 24 ciclos)
+App 24 to App 19 > Path: 28 36 44 43 42 41 40 (6 saltos ~ 18 ciclos)
+App 25 to App 0 > Path: 8 9 17 25 24 (4 saltos ~ 12 ciclos)
+App 25 to App 9 > Path: 8 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 39 47 (17 saltos ~ 51 ciclos)
+App 25 to App 14 > Path: 8 9 17 25 33 41 42 43 44 36 28 29 21 13 (13 saltos ~ 39 ciclos)
+App 25 to App 39 > Path: 8 9 17 25 33 41 42 43 44 36 28 29 21 (12 saltos ~ 36 ciclos)
+App 25 to App 45 > Path: 8 9 17 25 33 41 42 43 44 36 28 29 21 22 (13 saltos ~ 39 ciclos)
+App 26 to App 0 > Path: 29 28 36 44 43 42 41 40 32 24 (9 saltos ~ 27 ciclos)
+App 26 to App 16 > Path: 29 28 36 44 43 42 34 26 18 17 (9 saltos ~ 27 ciclos)
+App 26 to App 20 > Path: 29 28 36 44 43 42 41 40 32 (8 saltos ~ 24 ciclos)
+App 26 to App 30 > Path: 29 21 22 23 31 (4 saltos ~ 12 ciclos)
+App 26 to App 45 > Path: 29 21 22 (2 saltos ~ 6 ciclos)
+App 27 to App 11 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 27 to App 13 > Path: 41 42 43 44 36 28 29 21 22 23 31 39 47 46 (13 saltos ~ 39 ciclos)
+App 27 to App 19 > Path: 41 40 (1 saltos ~ 3 ciclos)
+App 27 to App 37 > Path: 41 42 43 44 36 28 29 21 22 23 31 39 47 55 63 62 (15 saltos ~ 45 ciclos)
+App 27 to App 46 > Path: 41 42 43 44 36 28 29 21 22 23 15 (10 saltos ~ 30 ciclos)
+App 28 to App 20 > Path: 14 22 21 29 28 36 44 43 42 41 40 32 (11 saltos ~ 33 ciclos)
+App 28 to App 25 > Path: 14 22 21 29 28 36 44 43 42 34 26 18 17 9 8 (14 saltos ~ 42 ciclos)
+App 28 to App 27 > Path: 14 22 21 29 28 36 44 43 42 41 (9 saltos ~ 27 ciclos)
+App 28 to App 37 > Path: 14 15 23 31 39 47 55 63 62 (8 saltos ~ 24 ciclos)
+App 28 to App 44 > Path: 14 22 21 29 28 36 44 43 42 34 26 18 17 9 8 0 (15 saltos ~ 45 ciclos)
+App 29 to App 2 > Path: 9 17 25 33 41 42 43 44 36 28 29 21 22 23 15 (14 saltos ~ 42 ciclos)
+App 29 to App 12 > Path: 9 17 18 26 34 (4 saltos ~ 12 ciclos)
+App 29 to App 18 > Path: 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 39 (15 saltos ~ 45 ciclos)
+App 29 to App 23 > Path: 9 10 2 (2 saltos ~ 6 ciclos)
+App 29 to App 49 > Path: 9 17 25 33 41 42 43 44 36 (8 saltos ~ 24 ciclos)
+App 30 to App 7 > Path: 31 39 47 55 63 62 61 (6 saltos ~ 18 ciclos)
+App 30 to App 14 > Path: 31 23 22 21 13 (4 saltos ~ 12 ciclos)
+App 30 to App 20 > Path: 31 23 22 21 29 28 36 44 43 42 41 40 32 (12 saltos ~ 36 ciclos)
+App 30 to App 24 > Path: 31 23 22 21 29 28 (5 saltos ~ 15 ciclos)
+App 30 to App 43 > Path: 31 39 47 55 63 62 61 53 (7 saltos ~ 21 ciclos)
+App 31 to App 6 > Path: 18 26 34 42 43 44 36 28 29 21 22 23 31 39 47 55 (15 saltos ~ 45 ciclos)
+App 31 to App 14 > Path: 18 26 34 42 43 44 36 28 29 21 13 (10 saltos ~ 30 ciclos)
+App 31 to App 16 > Path: 18 17 (1 saltos ~ 3 ciclos)
+App 31 to App 23 > Path: 18 10 2 (2 saltos ~ 6 ciclos)
+App 31 to App 32 > Path: 18 26 25 24 (3 saltos ~ 9 ciclos)
+App 32 to App 4 > Path: 24 32 40 41 42 43 44 36 28 29 21 13 12 (12 saltos ~ 36 ciclos)
+App 32 to App 17 > Path: 24 32 40 48 (3 saltos ~ 9 ciclos)
+App 32 to App 30 > Path: 24 32 40 41 42 43 44 36 28 29 21 22 23 31 (13 saltos ~ 39 ciclos)
+App 32 to App 33 > Path: 24 32 40 41 42 43 44 36 28 29 21 13 12 (12 saltos ~ 36 ciclos)
+App 32 to App 35 > Path: 24 25 26 (2 saltos ~ 6 ciclos)
+App 33 to App 9 > Path: 12 13 14 15 23 31 39 47 (7 saltos ~ 21 ciclos)
+App 33 to App 11 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 33 to App 18 > Path: 12 13 14 15 23 31 39 (6 saltos ~ 18 ciclos)
+App 33 to App 33 > Path: 12 (0 saltos ~ 0 ciclos)
+App 33 to App 37 > Path: 12 13 14 15 23 31 39 47 55 63 62 (10 saltos ~ 30 ciclos)
+App 34 to App 15 > Path: 44 43 42 41 33 (4 saltos ~ 12 ciclos)
+App 34 to App 39 > Path: 44 36 28 29 21 (4 saltos ~ 12 ciclos)
+App 34 to App 41 > Path: 44 43 42 50 (3 saltos ~ 9 ciclos)
+App 34 to App 48 > Path: 44 43 42 34 26 25 (5 saltos ~ 15 ciclos)
+App 34 to App 50 > Path: 44 36 28 29 21 22 23 (6 saltos ~ 18 ciclos)
+App 35 to App 3 > Path: 26 18 17 9 8 (4 saltos ~ 12 ciclos)
+App 35 to App 18 > Path: 26 34 42 43 44 36 28 29 21 22 23 31 39 (12 saltos ~ 36 ciclos)
+App 35 to App 29 > Path: 26 18 17 9 (3 saltos ~ 9 ciclos)
+App 35 to App 41 > Path: 26 34 42 50 (3 saltos ~ 9 ciclos)
+App 35 to App 49 > Path: 26 34 42 43 44 36 (5 saltos ~ 15 ciclos)
+App 36 to App 15 > Path: 6 14 22 21 29 28 36 44 43 42 41 33 (11 saltos ~ 33 ciclos)
+App 36 to App 24 > Path: 6 14 22 21 29 28 (5 saltos ~ 15 ciclos)
+App 36 to App 30 > Path: 6 14 15 23 31 (4 saltos ~ 12 ciclos)
+App 36 to App 43 > Path: 6 14 15 23 31 39 47 55 63 62 61 53 (11 saltos ~ 33 ciclos)
+App 36 to App 49 > Path: 6 14 22 21 29 28 36 (6 saltos ~ 18 ciclos)
+App 37 to App 1 > Path: 62 63 55 47 39 31 23 22 21 29 28 36 44 43 42 34 (15 saltos ~ 45 ciclos)
+App 37 to App 6 > Path: 62 63 55 (2 saltos ~ 6 ciclos)
+App 37 to App 24 > Path: 62 63 55 47 39 31 23 22 21 29 28 (10 saltos ~ 30 ciclos)
+App 37 to App 43 > Path: 62 61 53 (2 saltos ~ 6 ciclos)
+App 37 to App 46 > Path: 62 63 55 47 39 31 23 15 (7 saltos ~ 21 ciclos)
+App 38 to App 10 > Path: 43 42 (1 saltos ~ 3 ciclos)
+App 38 to App 18 > Path: 43 44 36 28 29 21 22 23 31 39 (9 saltos ~ 27 ciclos)
+App 38 to App 34 > Path: 43 44 (1 saltos ~ 3 ciclos)
+App 38 to App 42 > Path: 43 42 34 26 18 19 (5 saltos ~ 15 ciclos)
+App 38 to App 50 > Path: 43 44 36 28 29 21 22 23 (7 saltos ~ 21 ciclos)
+App 39 to App 10 > Path: 21 29 28 36 44 43 42 (6 saltos ~ 18 ciclos)
+App 39 to App 24 > Path: 21 29 28 (2 saltos ~ 6 ciclos)
+App 39 to App 28 > Path: 21 22 14 (2 saltos ~ 6 ciclos)
+App 39 to App 48 > Path: 21 29 28 36 44 43 42 34 26 25 (9 saltos ~ 27 ciclos)
+App 39 to App 49 > Path: 21 29 28 36 (3 saltos ~ 9 ciclos)
+App 40 to App 4 > Path: 63 55 47 39 31 23 22 21 13 12 (9 saltos ~ 27 ciclos)
+App 40 to App 8 > Path: 63 55 47 39 31 23 22 21 29 28 36 44 43 42 34 26 18 10 (17 saltos ~ 51 ciclos)
+App 40 to App 15 > Path: 63 55 47 39 31 23 22 21 29 28 36 44 43 42 41 33 (15 saltos ~ 45 ciclos)
+App 40 to App 23 > Path: 63 55 47 39 31 23 22 21 29 28 36 44 43 42 34 26 18 10 2 (18 saltos ~ 54 ciclos)
+App 40 to App 50 > Path: 63 55 47 39 31 23 (5 saltos ~ 15 ciclos)
+App 41 to App 6 > Path: 50 42 43 44 36 28 29 21 22 23 31 39 47 55 (13 saltos ~ 39 ciclos)
+App 41 to App 15 > Path: 50 49 41 33 (3 saltos ~ 9 ciclos)
+App 41 to App 26 > Path: 50 42 43 44 36 28 29 (6 saltos ~ 18 ciclos)
+App 41 to App 35 > Path: 50 42 34 26 (3 saltos ~ 9 ciclos)
+App 41 to App 37 > Path: 50 42 43 44 36 28 29 21 22 23 31 39 47 55 63 62 (15 saltos ~ 45 ciclos)
+App 42 to App 1 > Path: 19 18 26 34 (3 saltos ~ 9 ciclos)
+App 42 to App 4 > Path: 19 18 26 34 42 43 44 36 28 29 21 13 12 (12 saltos ~ 36 ciclos)
+App 42 to App 18 > Path: 19 18 26 34 42 43 44 36 28 29 21 22 23 31 39 (14 saltos ~ 42 ciclos)
+App 42 to App 24 > Path: 19 18 26 34 42 43 44 36 28 (8 saltos ~ 24 ciclos)
+App 42 to App 31 > Path: 19 18 (1 saltos ~ 3 ciclos)
+App 43 to App 27 > Path: 53 61 62 63 55 47 39 31 23 22 21 29 28 36 44 43 42 41 (17 saltos ~ 51 ciclos)
+App 43 to App 34 > Path: 53 61 62 63 55 47 39 31 23 22 21 29 28 36 44 (14 saltos ~ 42 ciclos)
+App 43 to App 41 > Path: 53 61 62 63 55 47 39 31 23 22 21 29 28 36 44 43 42 50 (17 saltos ~ 51 ciclos)
+App 43 to App 43 > Path: 53 (0 saltos ~ 0 ciclos)
+App 43 to App 49 > Path: 53 61 62 63 55 47 39 31 23 22 21 29 28 36 (13 saltos ~ 39 ciclos)
+App 44 to App 6 > Path: 0 8 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 39 47 55 (19 saltos ~ 57 ciclos)
+App 44 to App 13 > Path: 0 8 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 39 47 46 (19 saltos ~ 57 ciclos)
+App 44 to App 15 > Path: 0 8 9 17 25 33 (5 saltos ~ 15 ciclos)
+App 44 to App 20 > Path: 0 8 9 17 25 33 32 (6 saltos ~ 18 ciclos)
+App 44 to App 30 > Path: 0 8 9 17 25 33 41 42 43 44 36 28 29 21 22 23 31 (16 saltos ~ 48 ciclos)
+App 45 to App 1 > Path: 22 21 29 28 36 44 43 42 34 (8 saltos ~ 24 ciclos)
+App 45 to App 2 > Path: 22 23 15 (2 saltos ~ 6 ciclos)
+App 45 to App 6 > Path: 22 23 31 39 47 55 (5 saltos ~ 15 ciclos)
+App 45 to App 42 > Path: 22 21 29 28 36 44 43 42 34 26 18 19 (11 saltos ~ 33 ciclos)
+App 45 to App 45 > Path: 22 (0 saltos ~ 0 ciclos)
+App 46 to App 2 > Path: 15 (0 saltos ~ 0 ciclos)
+App 46 to App 7 > Path: 15 23 31 39 47 55 63 62 61 (8 saltos ~ 24 ciclos)
+App 46 to App 15 > Path: 15 23 22 21 29 28 36 44 43 42 41 33 (11 saltos ~ 33 ciclos)
+App 46 to App 23 > Path: 15 23 22 21 29 28 36 44 43 42 34 26 18 10 2 (14 saltos ~ 42 ciclos)
+App 46 to App 25 > Path: 15 23 22 21 29 28 36 44 43 42 34 26 18 17 9 8 (15 saltos ~ 45 ciclos)
+App 47 to App 15 > Path: 49 41 33 (2 saltos ~ 6 ciclos)
+App 47 to App 16 > Path: 49 41 33 25 17 (4 saltos ~ 12 ciclos)
+App 47 to App 20 > Path: 49 48 40 32 (3 saltos ~ 9 ciclos)
+App 47 to App 33 > Path: 49 50 42 43 44 36 28 29 21 13 12 (10 saltos ~ 30 ciclos)
+App 47 to App 44 > Path: 49 41 33 25 17 9 8 0 (7 saltos ~ 21 ciclos)
+App 48 to App 23 > Path: 25 26 18 10 2 (4 saltos ~ 12 ciclos)
+App 48 to App 28 > Path: 25 33 41 42 43 44 36 28 29 21 22 14 (11 saltos ~ 33 ciclos)
+App 48 to App 29 > Path: 25 17 9 (2 saltos ~ 6 ciclos)
+App 48 to App 40 > Path: 25 33 41 42 43 44 36 28 29 21 22 23 31 39 47 55 63 (16 saltos ~ 48 ciclos)
+App 48 to App 41 > Path: 25 33 41 49 50 (4 saltos ~ 12 ciclos)
+App 49 to App 10 > Path: 36 44 43 42 (3 saltos ~ 9 ciclos)
+App 49 to App 19 > Path: 36 44 43 42 41 40 (5 saltos ~ 15 ciclos)
+App 49 to App 24 > Path: 36 28 (1 saltos ~ 3 ciclos)
+App 49 to App 36 > Path: 36 28 29 21 13 5 6 (6 saltos ~ 18 ciclos)
+App 49 to App 46 > Path: 36 28 29 21 22 23 15 (6 saltos ~ 18 ciclos)
+App 50 to App 11 > Path: Não foi possível encontrar um caminho para realizar essa comunicação
+App 50 to App 28 > Path: 23 15 14 (2 saltos ~ 6 ciclos)
+App 50 to App 39 > Path: 23 22 21 (2 saltos ~ 6 ciclos)
+App 50 to App 44 > Path: 23 22 21 29 28 36 44 43 42 34 26 18 17 9 8 0 (15 saltos ~ 45 ciclos)
+App 50 to App 49 > Path: 23 22 21 29 28 36 (5 saltos ~ 15 ciclos)
 
 
--- Tempo de execução: 10 ms.
+-- Tempo de execução: 74 ms.

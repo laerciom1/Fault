@@ -1422,7 +1422,7 @@ public class Grid {
 					destinationL = destinationPos[0]; 			// Busca a posicao da aplicacao
 					destinationC = destinationPos[1];			// conectada a i que foi encontrada
 					int[] headNTail = {source, destination};	// Vetor que vai guardar o caminho feito entre i e j;
-//					System.out.println("Source: " + source + " | Destination: " + destination);
+					System.out.println("Source: " + source + " | Destination: " + destination);
 												// Node inicial (i) 
 												// Node final (j)	
 												// "Caminho de i para j:"
@@ -1732,7 +1732,7 @@ public class Grid {
 				 										if(grid[auxL+j][auxC-1-i].isWorking()){
 				 											if(Math.sqrt(Math.pow((auxC-1-i)-destinationC, 2)+Math.pow((auxL+j)-destinationL,2)) < distance){
 				 												distance = Math.sqrt(Math.pow((auxC-1-i)-destinationC, 2)+Math.pow((auxL+j)-destinationL,2));
-				 												pontos[i][0] = auxL-j;
+				 												pontos[i][0] = auxL+j;
 				 											}
 				 										}
 				 										else{
