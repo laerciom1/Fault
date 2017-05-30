@@ -12,14 +12,14 @@ public class Aplicação {
 		Statistic statistic = new Statistic();
 		int[] routersUsage;
 		double[] routersUsagePercent;
-		AdjacencyMatrix adjacencyMatrix = myFileReader.readAdjacencyMatrix("gridTopology/10x10.txt");
+		AdjacencyMatrix adjacencyMatrix = myFileReader.readAdjacencyMatrix("gridTopology/9x9.txt");
 		CommunicationMatrix communicationMatrix = myFileReader.readCommunicationMatrix("communications/1to1.txt");
 		Grid grid = new Grid(adjacencyMatrix);
 		
 		{
-			grid.allocateAppByRouter(1, 7);
-			grid.allocateAppByRouter(0, 64);
-			int[] routers = {1, 2, 5, 6, 9, 12, 16, 17, 26, 28, 31, 33, 42, 43, 47, 48, 49, 51, 54, 65, 66, 67, 70, 76, 85, 87, 91, 95, 98, 99};
+			grid.allocateAppByRouter(1, 72);
+			grid.allocateAppByRouter(0, 0);
+			int[] routers = {5, 6, 10, 18, 20, 23, 26, 29, 35, 36, 38, 39, 43, 46, 48, 49, 51, 61, 63, 64, 67, 68, 69, 70};
 			grid.injectFaultListByNode(routers);
 
 //			grid.injectFaultsByPercentage(30);
