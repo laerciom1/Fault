@@ -1,3 +1,4 @@
+package app;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -6,38 +7,36 @@ import domain.*;
 
 public class Aplicação {
 	public static void main(String args[]) throws FileNotFoundException, IOException{
-		MyFileReader mfr = new MyFileReader();
-		MyFileWriter mfw = new MyFileWriter();
+		MyFileReader myFileReader = new MyFileReader();
+		MyFileWriter myFileWriter = new MyFileWriter();
 		Statistic statistic = new Statistic();
 		int[] routersUsage;
 		double[] routersUsagePercent;
-		AdjacencyMatrix adjacencyMatrix = mfr.readAdjacencyMatrix("gridTopology/4x4.txt");
-		CommunicationMatrix communicationMatrix = mfr.readCommunicationMatrix("communications/1to1.txt");
+		AdjacencyMatrix adjacencyMatrix = myFileReader.readAdjacencyMatrix("gridTopology/10x10.txt");
+		CommunicationMatrix communicationMatrix = myFileReader.readCommunicationMatrix("communications/1to1.txt");
 		Grid grid = new Grid(adjacencyMatrix);
 		
 		{
-			//grid.injectFaultListByNode(new int[]{1,4});
-			//grid.injectFaultsByPercentage(10);
-			grid.allocateAppByRouter(1, 9);
-			grid.allocateAppByRouter(0, 5);
-		}
-//		{
+			grid.allocateAppByRouter(1, 7);
+			grid.allocateAppByRouter(0, 64);
+			int[] routers = {1, 2, 5, 6, 9, 12, 16, 17, 26, 28, 31, 33, 42, 43, 47, 48, 49, 51, 54, 65, 66, 67, 70, 76, 85, 87, 91, 95, 98, 99};
+			grid.injectFaultListByNode(routers);
+
 //			grid.injectFaultsByPercentage(30);
 //			grid.allocateAppsRand(communicationMatrix.getTasks());
-//		}
+		}
 		
-		//grid.allocateAppsSeq(communicationMatrix.getTasks());
 		grid.paintGrid();
 		
 		long tempo;
 		
 		tempo = System.currentTimeMillis();
-		int[][] GridParametrizavel = grid.ParametrizavelPadrao(communicationMatrix, 3);	
+		int[][] GridParametrizavel = grid.ParametrizavelPadrao(communicationMatrix, 5);	
 		//int[][] GridParametrizavel = grid.ParametrizavelPadrao(communicationMatrix, 1);
 		tempo = System.currentTimeMillis()-tempo;
 		routersUsage = statistic.routersUsage(adjacencyMatrix, GridParametrizavel);
 		routersUsagePercent = statistic.routersUsagePercent(adjacencyMatrix, GridParametrizavel, routersUsage);
-		mfw.printAll("resultados/Grid Parametrizavel Padrao.txt", "Parametrizavel Padrão", grid, routersUsage, routersUsagePercent, tempo, GridParametrizavel);
+		myFileWriter.printAll("resultados/Grid Parametrizavel Padrao.txt", "Parametrizavel Padrão", grid, routersUsage, routersUsagePercent, tempo, GridParametrizavel);
 		System.out.print("Parametrizavel Padrão OK\n");
 		
 		for(int i = 0; i < GridParametrizavel.length; i++){

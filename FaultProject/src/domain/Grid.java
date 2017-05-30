@@ -1456,8 +1456,8 @@ public class Grid {
 	 																													// não for verificado que não será possível
 	 																													// alcançá-lo...
 	 						// Para testes e debug
-//	 						System.out.println("Current: " + auxL + ", " + auxC + "(" + ((auxL*columns)+auxC) + ")");
-//	 						System.out.println("Destination: " + destinationL + ", " + destinationC + "(" + ((destinationL*columns)+destinationC) + ")");
+	 						System.out.println("Current: " + auxL + ", " + auxC + "(" + ((auxL*columns)+auxC) + ")");
+	 						System.out.println("Destination: " + destinationL + ", " + destinationC + "(" + ((destinationL*columns)+destinationC) + ")");
 	 						
 	 						/*
 	 						 * BUSCA PELO NORTE
@@ -1585,6 +1585,127 @@ public class Grid {
 		 											break;
 		 										}
 			 								}
+	 									} else {
+	 										int pontos[][] = new int[up][2];
+
+											for(int i = 0; i < pontos.length; i++){	
+												int hops = lookahead-(i+1);			
+												pontos[i][0] = auxL-(i+1);			
+												if(hops == 0){						
+													pontos[i][1] = auxC;			
+												}
+												else{
+													
+													double distanceAux = Math.sqrt(Math.pow(auxC-auxC, 2)+Math.pow(auxL-auxL,2));
+													pontos[i][1] = auxC; 
+													
+													for(int j = 1; j <= hops; j++){
+														if(auxC > destinationC){
+															if(grid[auxL-1-i][auxC-j].isWorking()){
+																if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																	pontos[i][1] = auxC-j;
+																}
+															}
+															else{
+																break;
+															}
+															
+															if(j == hops || auxC-j == 0){ 
+																break;
+															}
+														} else if (auxC < destinationC) {
+															if(grid[auxL-1-i][auxC+j].isWorking()){
+																if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																	pontos[i][1] = auxC+j;
+																}
+															}
+															else{
+																break;
+															}
+															
+															if(j == hops || auxC+j == columns-1){ 
+																break;
+															}
+														} else {
+															if (auxC+j > columns-1) {
+																if(grid[auxL-1-i][auxC-j].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																		pontos[i][1] = auxC-j;
+																	}
+																}
+																else{
+																	break;
+																}
+																
+																if(j == hops || auxC-j == 0){ 
+																	break;
+																}
+															} else if (auxC-j < 0) {
+																if(grid[auxL-1-i][auxC+j].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																		pontos[i][1] = auxC+j;
+																	}
+																}
+																else{
+																	break;
+																}
+																
+																if(j == hops || auxC+j == columns-1){ 
+																	break;
+																}
+															} else {
+																boolean rand = random.nextBoolean();
+																if (rand) {
+																	if(grid[auxL-1-i][auxC+j].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																			pontos[i][1] = auxC+j;
+																		}
+																	}
+																	else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxC+j == columns-1){ 
+																		break;
+																	}
+																} else {
+																	if(grid[auxL-1-i][auxC-j].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL-1-i)-auxL,2));
+																			pontos[i][1] = auxC-j;
+																		}
+																	}
+																	else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxC-j == 0){ 
+																		break;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+											
+											double max = Math.sqrt(Math.pow(pontos[0][1]-auxC, 2)+Math.pow(pontos[0][0]-auxL,2));
+											int pos = 0; 
+											for(int i = 1; i < pontos.length; i++){	
+																					
+												if(Math.sqrt(Math.pow(pontos[i][1]-auxC, 2)+Math.pow(pontos[i][0]-auxL,2)) > max){
+													max = Math.sqrt(Math.pow(pontos[i][1]-destinationC, 2)+Math.pow(pontos[i][0]-destinationL,2));
+													pos = i;
+												}
+											}
+											
+											north[0] = pontos[pos][0]; 
+											north[1] = pontos[pos][1];
 	 									}
 	 								}
 	 							}
@@ -1693,25 +1814,140 @@ public class Grid {
 	 									south[1] = auxC;
 	 									double distance = Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow(auxL-destinationL,2));
 	 									if(auxL < destinationL){
-	 										for(int j = 1; j <= down; j++){
-		 										if(grid[auxL+j][auxC].isWorking()){
-		 											if(Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow((auxL+j)-destinationL,2)) < distance){
-		 												distance = Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow((auxL+j)-destinationL,2));
-		 												south[0] = auxL+j;
+	 										for(int i = 1; i <= down; i++){
+		 										if(grid[auxL+i][auxC].isWorking()){
+		 											if(Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow((auxL+i)-destinationL,2)) < distance){
+		 												distance = Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow((auxL+i)-destinationL,2));
+		 												south[0] = auxL+i;
 		 											}
-		 										}
-		 										else{
+		 										} else{
 		 											break;
 		 										}
 		 										
-		 										if(j == down || auxL+j == lines-1){
+		 										if(i == down || auxL+i == lines-1){
 		 											break;
 		 										}
 			 								}
+	 									} else {
+	 										int pontos[][] = new int[down][2];
+
+											for(int i = 0; i < pontos.length; i++){	
+												int hops = lookahead-(i+1);			
+												pontos[i][0] = auxL+(i+1);			
+												if(hops == 0){						
+													pontos[i][1] = auxC;			
+												} else{
+													
+													double distanceAux = Math.sqrt(Math.pow(auxC-auxC, 2)+Math.pow(auxL-auxL,2));
+													pontos[i][1] = auxC; 
+													
+													for(int j = 1; j <= hops; j++){
+														if(auxC > destinationC){
+															if(grid[auxL-1-i][auxC-j].isWorking()){
+																if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																	pontos[i][1] = auxC-j;
+																}
+															} else{
+																break;
+															}
+															
+															if(j == hops || auxC-j == 0){ 
+																break;
+															}
+														} else if (auxC < destinationC) {
+															if(grid[auxL+1+i][auxC+j].isWorking()){
+																if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																	pontos[i][1] = auxC+j;
+																}
+															}
+															else{
+																break;
+															}
+															
+															if(j == hops || auxC+j == columns-1){ 
+																break;
+															}
+														} else {
+															if (auxC+j > columns-1) {
+																if(grid[auxL-1-i][auxC-j].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																		pontos[i][1] = auxC-j;
+																	}
+																} else{
+																	break;
+																}
+																
+																if(j == hops || auxC-j == 0){ 
+																	break;
+																}
+															} else if(auxC-j < 0) {
+																if(grid[auxL+1+i][auxC+j].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																		pontos[i][1] = auxC+j;
+																	}
+																}
+																else{
+																	break;
+																}
+																
+																if(j == hops || auxC+j == columns-1){ 
+																	break;
+																}
+															} else {
+																boolean rand = random.nextBoolean();
+																if (rand) {
+																	if(grid[auxL+1+i][auxC+j].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC+j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																			pontos[i][1] = auxC+j;
+																		}
+																	}
+																	else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxC+j == columns-1){ 
+																		break;
+																	}
+																} else {
+																	if(grid[auxL-1-i][auxC-j].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC-j)-auxC, 2)+Math.pow((auxL+1+i)-auxL,2));
+																			pontos[i][1] = auxC-j;
+																		}
+																	} else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxC-j == 0){ 
+																		break;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+											
+											double max = Math.sqrt(Math.pow(pontos[0][1]-auxC, 2)+Math.pow(pontos[0][0]-auxL,2));
+											int pos = 0; 
+											for(int i = 1; i < pontos.length; i++){	
+																					
+												if(Math.sqrt(Math.pow(pontos[i][1]-auxC, 2)+Math.pow(pontos[i][0]-auxL,2)) > max){
+													max = Math.sqrt(Math.pow(pontos[i][1]-destinationC, 2)+Math.pow(pontos[i][0]-destinationL,2));
+													pos = i;
+												}
+											}
+											
+											south[0] = pontos[pos][0]; 
+											south[1] = pontos[pos][1];
 	 									}
 	 								}
-	 							}
-								else{
+	 							} else{
 	 								south[0] = -1;
 	 								south[1] = -1;
 	 							}
@@ -1723,8 +1959,7 @@ public class Grid {
 	 						if(auxC-1 < 0){
 	 							west[0] = -1;
 	 							west[1] = -1;
-	 						}
-	 						else{
+	 						} else{
 	 							int left = 0;
 	 							boolean limite = false;
 	 							boolean looka = false;
@@ -1733,14 +1968,11 @@ public class Grid {
 	 								if(!grid[auxL][auxC-left].isWorking()){
 	 									left--;
 	 									falha = true;
-	 								}
-	 								else if(left == lookahead){
+	 								} else if(left == lookahead){
 	 									looka = true;
-	 								}
-	 								else if(auxC-left == 0){
+	 								} else if(auxC-left == 0){
 	 									limite = true;
-	 								}
-	 								else{
+	 								} else{
 	 									left++;
 	 								}
 	 							}
@@ -1763,8 +1995,7 @@ public class Grid {
 				 												distance = Math.sqrt(Math.pow((auxC-1-i)-destinationC, 2)+Math.pow((auxL-j)-destinationL,2));
 				 												pontos[i][0] = auxL-j;
 				 											}
-				 										}
-				 										else{
+				 										} else{
 				 											break;
 				 										}
 				 										
@@ -1778,8 +2009,7 @@ public class Grid {
 				 												distance = Math.sqrt(Math.pow((auxC-1-i)-destinationC, 2)+Math.pow((auxL+j)-destinationL,2));
 				 												pontos[i][0] = auxL+j;
 				 											}
-				 										}
-				 										else{
+				 										} else{
 				 											break;
 			 											}
 				 										
@@ -1802,8 +2032,7 @@ public class Grid {
  		 								
  		 								west[0] = pontos[pos][0];
  		 								west[1] = pontos[pos][1];
-	 								}
-	 								else{
+	 								} else {
 	 									west[0] = auxL;
 	 									west[1] = auxC;
 	 									double distance = Math.sqrt(Math.pow(auxC-destinationC, 2)+Math.pow(auxL-destinationL,2));
@@ -1814,8 +2043,7 @@ public class Grid {
 		 												distance = Math.sqrt(Math.pow((auxC-j)-destinationC, 2)+Math.pow(auxL-destinationL,2));
 		 												west[1] = auxC-j;
 		 											}
-		 										}
-		 										else{
+		 										} else {
 		 											break;
 		 										}
 		 										
@@ -1823,10 +2051,123 @@ public class Grid {
 		 											break;
 		 										}
 			 								}
+	 									} else {
+	 										int pontos[][] = new int[left][2];
+
+											for(int i = 0; i < pontos.length; i++){	
+												int hops = lookahead-(i+1);			
+												pontos[i][1] = auxC-(i+1);			
+												if(hops == 0){						
+													pontos[i][0] = auxL;			
+												} else{
+													
+													double distanceAux = Math.sqrt(Math.pow(auxC-auxC, 2)+Math.pow(auxL-auxL,2));
+													pontos[i][0] = auxL; 
+													
+													for(int j = 1; j <= hops; j++){
+														if (auxL > destinationL) {
+															if(grid[auxL-j][auxC-1-i].isWorking()){
+																if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																	pontos[i][0] = auxL-j;
+																}
+															} else{
+																break;
+															}
+															if(j == hops || auxL-j == 0){ 
+																break;
+															}
+														} else if (auxL < destinationL) {
+															if(grid[auxL+j][auxC-1-i].isWorking()){
+																if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																	pontos[i][0] = auxL+j;
+																}
+															}
+															else{
+																break;
+															}
+															
+															if(j == hops || auxL+j == columns-1){ 
+																break;
+															}
+														} else {
+															if (auxL+j > lines-1) {
+																if(grid[auxL-j][auxC-1-i].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																		pontos[i][0] = auxL-j;
+																	}
+																} else{
+																	break;
+																}
+																if(j == hops || auxL-j == 0){ 
+																	break;
+																}
+															} else if (auxL-j < 0) {
+																if(grid[auxL+j][auxC-1-i].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																		pontos[i][0] = auxL+j;
+																	}
+																}
+																else{
+																	break;
+																}
+																
+																if(j == hops || auxL+j == columns-1){ 
+																	break;
+																}
+															} else {
+																boolean rand = random.nextBoolean();
+																if (rand) {
+																	if(grid[auxL+j][auxC-1-i].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																			pontos[i][0] = auxL+j;
+																		}
+																	}
+																	else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxL+j == columns-1){ 
+																		break;
+																	}
+																} else {
+																	if(grid[auxL-j][auxC-1-i].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC-1-i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																			pontos[i][0] = auxL-j;
+																		}
+																	} else{
+																		break;
+																	}
+																	if(j == hops || auxL-j == 0){ 
+																		break;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+											
+											double max = Math.sqrt(Math.pow(pontos[0][1]-auxC, 2)+Math.pow(pontos[0][0]-auxL,2));
+											int pos = 0; 
+											for(int i = 1; i < pontos.length; i++){	
+																					
+												if(Math.sqrt(Math.pow(pontos[i][1]-auxC, 2)+Math.pow(pontos[i][0]-auxL,2)) > max){
+													max = Math.sqrt(Math.pow(pontos[i][1]-destinationC, 2)+Math.pow(pontos[i][0]-destinationL,2));
+													pos = i;
+												}
+											}
+											
+											west[0] = pontos[pos][0]; 
+											west[1] = pontos[pos][1];
 	 									}
 	 								}
-	 							}
-								else{
+	 							} else {
 	 								west[0] = -1;
 	 								west[1] = -1;
 	 							}
@@ -1937,6 +2278,120 @@ public class Grid {
 		 											break;
 		 										}
 			 								}
+	 									} else {
+	 										int pontos[][] = new int[right][2];
+
+											for(int i = 0; i < pontos.length; i++){	
+												int hops = lookahead-(i+1);			
+												pontos[i][1] = auxC+(i+1);			
+												if(hops == 0){						
+													pontos[i][0] = auxL;			
+												} else{
+													
+													double distanceAux = Math.sqrt(Math.pow(auxC-auxC, 2)+Math.pow(auxL-auxL,2));
+													pontos[i][0] = auxL; 
+													
+													for(int j = 1; j <= hops; j++){
+														if(auxL > destinationL){
+															if(grid[auxL-j][auxC+1+i].isWorking()){
+																if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																	pontos[i][0] = auxL-j;
+																}
+															} else{
+																break;
+															}
+															if(j == hops || auxL-j == 0){ 
+																break;
+															}
+														} else if (auxL < destinationL) {
+															if(grid[auxL+j][auxC+1+i].isWorking()){
+																if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																	distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																	pontos[i][0] = auxL+j;
+																}
+															}
+															else{
+																break;
+															}
+															
+															if(j == hops || auxL+j == columns-1){ 
+																break;
+															}
+														} else {
+															if (auxL+j > lines-1) {
+																if(grid[auxL-j][auxC+1+i].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																		pontos[i][0] = auxL-j;
+																	}
+																} else{
+																	break;
+																}
+																if(j == hops || auxL-j == 0){ 
+																	break;
+																}
+															} else if (auxL-j < 0) {
+																if(grid[auxL+j][auxC+1+i].isWorking()){
+																	if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																		distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																		pontos[i][0] = auxL+j;
+																	}
+																}
+																else{
+																	break;
+																}
+																
+																if(j == hops || auxL+j == columns-1){ 
+																	break;
+																}
+															} else {
+																boolean rand = random.nextBoolean();
+																if (rand) {
+																	if(grid[auxL+j][auxC+1+i].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL+j)-auxL,2));
+																			pontos[i][0] = auxL+j;
+																		}
+																	}
+																	else{
+																		break;
+																	}
+																	
+																	if(j == hops || auxL+j == columns-1){ 
+																		break;
+																	}
+																} else {
+																	if(grid[auxL-j][auxC+1+i].isWorking()){
+																		if(Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2)) > distanceAux){
+																			distanceAux = Math.sqrt(Math.pow((auxC+1+i)-auxC, 2)+Math.pow((auxL-j)-auxL,2));
+																			pontos[i][0] = auxL-j;
+																		}
+																	} else{
+																		break;
+																	}
+																	if(j == hops || auxL-j == 0){ 
+																		break;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+											
+											double max = Math.sqrt(Math.pow(pontos[0][1]-auxC, 2)+Math.pow(pontos[0][0]-auxL,2));
+											int pos = 0; 
+											for(int i = 1; i < pontos.length; i++){	
+																					
+												if(Math.sqrt(Math.pow(pontos[i][1]-auxC, 2)+Math.pow(pontos[i][0]-auxL,2)) > max){
+													max = Math.sqrt(Math.pow(pontos[i][1]-destinationC, 2)+Math.pow(pontos[i][0]-destinationL,2));
+													pos = i;
+												}
+											}
+											
+											east[0] = pontos[pos][0]; 
+											east[1] = pontos[pos][1];
 	 									}
 	 								}
 	 							}
@@ -1950,14 +2405,14 @@ public class Grid {
 	 						int westOReast[] = new int[2];
 	 						
 	 						// Para testes e debug
-//	 						System.out.println("North: " + north[0] + ", " + north[1] + "(" + ((north[0]*columns)+north[1]) + ")");
-//	 						System.out.println("South: " + south[0] + ", " + south[1] + "(" + ((south[0]*columns)+south[1]) + ")");
-//	 						System.out.println("West: " + west[0] + ", " + west[1] + "(" + ((west[0]*columns)+west[1]) + ")");
-//	 						System.out.println("East: " + east[0] + ", " + east[1] + "(" + ((east[0]*columns)+east[1]) + ")");
-//	 						System.out.println("North to dest: " + Math.sqrt(Math.pow(north[1]-destinationC, 2)+Math.pow(north[0]-destinationL,2)));
-//	 						System.out.println("South to dest: " + Math.sqrt(Math.pow(south[1]-destinationC, 2)+Math.pow(south[0]-destinationL,2)));
-//	 						System.out.println("West to dest: " + Math.sqrt(Math.pow(west[1]-destinationC, 2)+Math.pow(west[0]-destinationL,2)));
-//	 						System.out.println("East to dest: " + Math.sqrt(Math.pow(east[1]-destinationC, 2)+Math.pow(east[0]-destinationL,2)));
+	 						System.out.println("North: " + north[0] + ", " + north[1] + " (" + ((north[0]*columns)+north[1]) + ")");
+	 						System.out.println("South: " + south[0] + ", " + south[1] + " (" + ((south[0]*columns)+south[1]) + ")");
+	 						System.out.println("West: " + west[0] + ", " + west[1] + " (" + ((west[0]*columns)+west[1]) + ")");
+	 						System.out.println("East: " + east[0] + ", " + east[1] + " (" + ((east[0]*columns)+east[1]) + ")");
+	 						System.out.println("North to dest: " + Math.sqrt(Math.pow(north[1]-destinationC, 2)+Math.pow(north[0]-destinationL,2)));
+	 						System.out.println("South to dest: " + Math.sqrt(Math.pow(south[1]-destinationC, 2)+Math.pow(south[0]-destinationL,2)));
+	 						System.out.println("West to dest: " + Math.sqrt(Math.pow(west[1]-destinationC, 2)+Math.pow(west[0]-destinationL,2)));
+	 						System.out.println("East to dest: " + Math.sqrt(Math.pow(east[1]-destinationC, 2)+Math.pow(east[0]-destinationL,2)));
 	 						
 	 						/*
 	 						 * Aqui já se tem as decisões de todas as 4 buscas, e o que será feito é estudá-las para saber qual delas deve ser a próxima decisão
@@ -2008,6 +2463,10 @@ public class Grid {
  												east : west;
  							}
 	 						
+	 						// Para debug
+	 						System.out.println("NORTH/SOUTH: " + northORsouth[0] + " " + northORsouth[1] + " (" + ((northORsouth[0]*columns)+northORsouth[1]) + ")");
+	 						System.out.println("WEST/EAST: " + westOReast[0] + " " + westOReast[1] + " (" + ((westOReast[0]*columns)+westOReast[1]) + ")");
+	 						
 	 						// Tomada de decisao final
 	 						
 	 						int decision[] = new int[2]; // vetor que guardará as coordenadas da decisão
@@ -2031,16 +2490,16 @@ public class Grid {
 											westOReast : northORsouth;
 	 						}
 	 						
-	 						// Para testes e debuga
-//	 						System.out.println("Decision: " + decision[0] + ", " + decision[1] + "(" + ((decision[0]*columns)+decision[1]) + ")\n");
-//	 						new java.util.Scanner(System.in).nextLine();
+	 						// Para testes e debug
+	 						System.out.println("Decision: " + decision[0] + ", " + decision[1] + " (" + ((decision[0]*columns)+decision[1]) + ")\n");
+	 						new java.util.Scanner(System.in).nextLine();
 	 						
 	 						if(decision[0] == -1){ // caso a decisão final seja inválida, é impossível atingir o destino
 	 							actualPath.add(-1);
 	 						}
 	 						/*
 	 						 * Para casa tipo de decisão, existe uma mecanica para ir adicionando os routers na ordem em que foram investigados
-	 						 * norte/sul: YX ; leste/oeste: XY > os else's abaixo descobrem como esses routers devem ser adicionados, os adicionam
+	 						 * norte/sul: YX ; leste/oeste: XY > os else's abaixo descobrem como esses routers devem ser adicionados, e os adicionam
 	 						 */
 	 						else if(decision == north){
  								while(auxL != north[0]){
